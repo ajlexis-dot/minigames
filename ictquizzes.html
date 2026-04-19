@@ -3,74 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gamified Lesson Quizzes</title>
+<title>ICT Quiz System</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-*{box-sizing:border-box}
-
-:root{
-  --radius:clamp(14px,2vw,20px);
-  --pad:clamp(16px,4vw,40px);
-  --btn-pad:clamp(14px,3vw,20px);
-  --btn-font:clamp(1rem,3.5vw,1.15rem);
-  --text:clamp(1rem,3.5vw,1.15rem);
-  --question:clamp(1.3rem,4.5vw,1.7rem);
-  --title:clamp(2.2rem,7vw,4.5rem);
-}
-
-body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(180deg,#f8fafc,#e0f2fe);
-  color:#1e293b;
-}
-
-button{
-  width:100%;
-  max-width:360px;
-  padding:var(--btn-pad);
-  font-size:var(--btn-font);
-  background:#3b82f6;
-  color:#fff;
-  border:none;
-  border-radius:var(--radius);
-  cursor:pointer;
-  margin:10px 0;
-  box-shadow:0 6px 0 #1e40af;
-}
-
-.quiz-box{
-  width:100%;
-  max-width:1000px;
-  margin:20px auto;
-  background:#fff;
-  padding:var(--pad);
-  border-radius:var(--radius);
-  box-shadow:0 20px 40px rgba(0,0,0,.1);
-  display:none;
-}
-
-.question{text-align:center;font-size:var(--question);margin-bottom:20px;}
-.options button{background:#eff6ff;color:#1e293b;border:2px solid #3b82f6;}
-.correct-glow{box-shadow:0 0 15px 5px #16a34a}
-.wrong-glow{box-shadow:0 0 15px 5px #dc2626}
-
+body{font-family:Poppins,Arial;margin:0;background:#f1f5f9;text-align:center}
+button{padding:12px;margin:6px;border:none;background:#2563eb;color:#fff;border-radius:10px;cursor:pointer}
+.card{background:#fff;margin:15px auto;padding:20px;border-radius:12px;max-width:600px;box-shadow:0 10px 20px rgba(0,0,0,.1)}
+.hidden{display:none}
+input{padding:10px;margin:5px;width:80%;max-width:300px}
 </style>
 
-<!-- EMAILJS -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-emailjs.init("YOUR_PUBLIC_KEY");
-</script>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="card">
+  <h2>ICT Quiz System</h2>
+  <button onclick="googleLogin()">Login with Google</button>
+  <p id="roleText"></p>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+  <h3>Welcome <span id="user"></span></h3>
+
+  <button onclick="startQuiz()">Start Quiz</button>
+  <button onclick="showLeaderboard()">Leaderboard</button>
+
+  <div id="teacherPanel" class="hidden">
+    <button onclick="openEditor()">Edit Questions (Teacher)</button>
+    <button onclick="registerTeacher()">Become Teacher</button>
+  </div>
+
+  <button onclick="logout()">Logout</button>
+
+  <div id="quiz" class="card hidden"></div>
+  <div id="leaderboard" class="card hidden"></div>
+</div>
+
 <script>
+
+// ================= FIREBASE =================
 const firebaseConfig = {
   apiKey: "YOUR_FIREBASE_CONFIG",
   authDomain: "YOUR_FIREBASE_CONFIG",
@@ -84,202 +63,174 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// ================= STATE =================
 let currentUser=null;
 let isTeacher=false;
-let userEmail="";
-let filtered=[],index=0,score=0;
+let questions=[];
+let index=0;
+let score=0;
 
-const MAX_ATTEMPTS=2;
-</script>
-
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<section id="loginScreen" style="text-align:center;padding:30px;">
-  <h2>Login</h2>
-
-  <button onclick="googleLogin()">Login with Google</button>
-  <button onclick="teacherLogin()">Teacher Login</button>
-
-  <hr>
-
-  <input type="email" id="emailInput" placeholder="email for quiz"
-    style="padding:12px;width:80%;max-width:300px;margin:10px;border-radius:10px">
-
-  <br>
-
-  <button id="startBtn">Start Quiz</button>
-
-  <p id="emailMsg" style="color:red;"></p>
-</section>
-
-<!-- QUIZ -->
-<header id="difficultyScreen" style="display:none;text-align:center;">
-  <h1>ICT Quizzes</h1>
-  <button data-level="easy">Easy</button>
-  <button data-level="medium">Medium</button>
-  <button data-level="hard">Hard</button>
-
-  <button onclick="showLeaderboard()">Leaderboard</button>
-  <button onclick="showTeacherDashboard()">Teacher Dashboard</button>
-</header>
-
-<section class="quiz-box" id="quizBox">
-  <div class="question" id="question"></div>
-  <div class="options" id="options"></div>
-</section>
-
-<section class="quiz-box" id="resultBox">
-  <h2>Score</h2>
-  <p id="score"></p>
-</section>
-
-<script>
-
-// QUIZ DATA (UNCHANGED STYLE)
-const questions=[
-{q:"ICT stands for?",o:["Information & Communication Technology","Internet Tool","Internal Tech","Info Control"],a:0,l:"easy"},
-{q:"Input device?",o:["Monitor","Keyboard","Speaker","Printer"],a:1,l:"easy"},
-{q:"RAM is?",o:["Storage","Memory","CPU","GPU"],a:1,l:"medium"},
-{q:"Firewall?",o:["Virus","Security","App","OS"],a:1,l:"hard"}
-];
-
-// LOGIN GOOGLE
+// ================= GOOGLE LOGIN =================
 function googleLogin(){
-  const provider=new firebase.auth.GoogleAuthProvider();
+  const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider).then(async res=>{
-    currentUser=res.user;
-    userEmail=res.user.email;
+    currentUser = res.user;
 
-    const ref=db.collection("users").doc(userEmail);
-    const doc=await ref.get();
+    const ref = db.collection("users").doc(currentUser.email);
+    const doc = await ref.get();
 
     if(!doc.exists){
-      await ref.set({email:userEmail,attempts:0,role:"student"});
+      await ref.set({
+        email: currentUser.email,
+        role: "student",
+        attempts: 0
+      });
     }
 
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("difficultyScreen").style.display="block";
+    const data = (await ref.get()).data();
+    isTeacher = data.role === "teacher";
+
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("user").innerText = currentUser.displayName;
+
+    document.getElementById("teacherPanel").classList.toggle("hidden", !isTeacher);
+
+    loadQuestions();
   });
 }
 
-// TEACHER LOGIN
-function teacherLogin(){
-  let email=prompt("Teacher email");
-  let pass=prompt("Password");
+// ================= TEACHER REGISTRATION =================
+async function registerTeacher(){
+  await db.collection("users").doc(currentUser.email).update({
+    role: "teacher"
+  });
 
-  if(email==="teacher@school.com" && pass==="1234"){
-    isTeacher=true;
-    alert("Teacher mode enabled");
+  isTeacher = true;
+  document.getElementById("teacherPanel").classList.remove("hidden");
+  alert("You are now a teacher");
+}
+
+// ================= LOAD QUESTIONS =================
+async function loadQuestions(){
+  questions = [];
+  const snap = await db.collection("questions").get();
+
+  snap.forEach(doc=>{
+    questions.push(doc.data());
+  });
+
+  if(questions.length===0){
+    questions = [
+      {q:"ICT stands for?",o:["Info & Com Tech","Internet Tool","Code Tech","None"],a:0}
+    ];
   }
 }
 
-// START QUIZ EMAIL MODE
-document.getElementById("startBtn").onclick=async()=>{
-  userEmail=document.getElementById("emailInput").value;
+// ================= QUIZ =================
+function startQuiz(){
+  index=0;
+  score=0;
+  document.getElementById("quiz").classList.remove("hidden");
+  loadQ();
+}
 
-  const ref=db.collection("users").doc(userEmail);
-  const doc=await ref.get();
+function loadQ(){
+  let q = questions[index];
 
-  let data=doc.exists?doc.data():{attempts:0};
+  document.getElementById("quiz").innerHTML = `
+    <h3>${q.q}</h3>
+    ${q.o.map((o,i)=>`<button onclick="answer(${i})">${o}</button>`).join("")}
+  `;
+}
 
-  if(data.attempts>=2){
-    document.getElementById("emailMsg").innerText="2 attempts used";
+async function answer(i){
+  if(i===questions[index].a) score++;
+  index++;
+
+  index < questions.length ? loadQ() : finish();
+}
+
+// ================= FINISH =================
+async function finish(){
+  document.getElementById("quiz").innerHTML = `
+    <h2>Score: ${score}/${questions.length}</h2>
+  `;
+
+  await db.collection("scores").add({
+    email: currentUser.email,
+    score: score,
+    total: questions.length
+  });
+
+  const ref = db.collection("users").doc(currentUser.email);
+  const data = (await ref.get()).data();
+
+  if(data.attempts < 2){
+    await ref.update({attempts: data.attempts + 1});
+  } else {
+    alert("2 attempts reached");
+  }
+}
+
+// ================= LEADERBOARD =================
+async function showLeaderboard(){
+  const snap = await db.collection("scores").orderBy("score","desc").limit(10).get();
+
+  let html="<h3>Leaderboard</h3>";
+
+  snap.forEach(d=>{
+    html += `<p>${d.data().email} - ${d.data().score}</p>`;
+  });
+
+  document.getElementById("leaderboard").innerHTML = html;
+  document.getElementById("leaderboard").classList.remove("hidden");
+}
+
+// ================= TEACHER QUESTION EDITOR =================
+function openEditor(){
+  if(!isTeacher){
+    alert("Teacher only");
     return;
   }
 
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("difficultyScreen").style.display="block";
-};
+  let box = document.createElement("div");
+  box.className="card";
 
-// DIFFICULTY
-document.querySelectorAll("[data-level]").forEach(btn=>{
-btn.onclick=()=>{
-  filtered=questions.filter(q=>q.l===btn.dataset.level);
-  index=score=0;
-  loadQ();
-};
-});
+  box.innerHTML = `
+    <h3>Add Question</h3>
+    <input id="q" placeholder="Question"><br>
+    <input id="o1" placeholder="Option 1"><br>
+    <input id="o2" placeholder="Option 2"><br>
+    <input id="o3" placeholder="Option 3"><br>
+    <input id="o4" placeholder="Option 4"><br>
+    <input id="a" placeholder="Correct Index (0-3)"><br>
+    <button onclick="saveQ()">Save</button>
+  `;
 
-function loadQ(){
-  let q=filtered[index];
-  document.getElementById("quizBox").style.display="block";
+  document.body.appendChild(box);
+}
 
-  document.getElementById("question").innerText=q.q;
-
-  let opt=document.getElementById("options");
-  opt.innerHTML="";
-
-  q.o.forEach((o,i)=>{
-    let b=document.createElement("button");
-    b.innerText=o;
-    b.onclick=()=>answer(i===q.a);
-    opt.appendChild(b);
+async function saveQ(){
+  await db.collection("questions").add({
+    q: document.getElementById("q").value,
+    o: [
+      document.getElementById("o1").value,
+      document.getElementById("o2").value,
+      document.getElementById("o3").value,
+      document.getElementById("o4").value
+    ],
+    a: parseInt(document.getElementById("a").value)
   });
+
+  alert("Question saved!");
 }
 
-function answer(correct){
-  if(correct)score++;
-  index++;
-
-  index<filtered.length?loadQ():finish();
-}
-
-async function finish(){
-
-document.getElementById("quizBox").style.display="none";
-document.getElementById("resultBox").style.display="block";
-
-document.getElementById("score").innerText=score+"/"+filtered.length;
-
-// SAVE CLOUD
-await db.collection("scores").add({
-email:userEmail,
-score:score,
-total:filtered.length
-});
-
-let ref=db.collection("users").doc(userEmail);
-let doc=await ref.get();
-
-let a=doc.data().attempts+1;
-
-await ref.update({attempts:a});
-
-// EMAIL SCORE
-emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
-to_email:userEmail,
-score:score+"/"+filtered.length
-});
-}
-
-// LEADERBOARD
-async function showLeaderboard(){
-let snap=await db.collection("scores").orderBy("score","desc").limit(10).get();
-
-let txt="LEADERBOARD\n";
-snap.forEach(d=>{
-txt+=d.data().email+" - "+d.data().score+"\n";
-});
-
-alert(txt);
-}
-
-// TEACHER DASHBOARD
-async function showTeacherDashboard(){
-if(!isTeacher)return alert("No access");
-
-let snap=await db.collection("scores").get();
-
-let txt="TEACHER DASHBOARD\n";
-snap.forEach(d=>{
-txt+=d.data().email+" : "+d.data().score+"\n";
-});
-
-alert(txt);
+// ================= LOGOUT =================
+function logout(){
+  auth.signOut();
+  location.reload();
 }
 
 </script>
