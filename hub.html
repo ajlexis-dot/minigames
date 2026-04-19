@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Game Selector</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #f8fafc, #e0f2fe);
+  color: #1e293b;
+  overflow-x: hidden;
+}
+
+/* FLOATING EMOJIS */
+.gadget-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.gadget {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.25;
+  animation: spinSide 20s linear infinite;
+}
+.gadget:nth-child(n){
+  top: calc(var(--i) * 10%);
+  animation-delay: calc(var(--i) * -2s);
+}
+
+@keyframes spinSide {
+  0% { transform: translateX(-30vw) rotate(0deg); }
+  100% { transform: translateX(130vw) rotate(360deg); }
+}
+
+/* CONTENT */
+header {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  /* PERFECT SIDE PROPORTIONS */
+  padding-block: 32px;
+  padding-inline: clamp(16px, 5vw, 32px);
+}
+
+/* HERO TEXT */
+header h1 {
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  color: #1d4ed8;
+  margin-bottom: 12px;
+}
+
+header p {
+  font-size: 1rem;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+
+/* GAME GRID WRAPPER */
+.games {
+  width: 100%;
+  max-width: 1000px;
+
+  margin-inline: auto; /* TRUE CENTERING */
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+
+  /* EQUAL MOBILE MARGINS */
+  padding-inline: clamp(8px, 4vw, 16px);
+}
+
+/* GAME CARD */
+.game-card {
+  background: white;
+  padding: 24px 20px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+
+  /* PREVENT EDGE STRETCH */
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.game-card:hover {
+  transform: translateY(-6px);
+}
+
+.game-icon {
+  font-size: 3.2rem;
+  margin-bottom: 10px;
+}
+
+.game-card h2 {
+  color: #1d4ed8;
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+}
+
+.game-card p {
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+/* BUTTON */
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 42px;
+  font-size: 0.95rem;
+  background: #3b82f6;
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 0 #1e40af;
+}
+
+.play-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 0 #1e40af;
+}
+
+/* LOCKED */
+.play-btn[href="#"] {
+  background: #94a3b8;
+  box-shadow: 0 6px 0 #64748b;
+  cursor: not-allowed;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+/* MOBILE ONLY FIX */
+@media (max-width: 480px) {
+  .games {
+    grid-template-columns: 1fr;
+  }
+
+  .gadget {
+    font-size: 2.2rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+<div class="gadget-background">
+  <div class="gadget" style="top:3%; font-size:2.4rem; animation-duration:28s;">📚</div>
+  <div class="gadget" style="top:8%; font-size:3.1rem; animation-duration:22s; animation-delay:-5s;">💻</div>
+  <div class="gadget" style="top:14%; font-size:2.8rem; animation-duration:30s; animation-delay:-10s;">🧠</div>
+  <div class="gadget" style="top:20%; font-size:3.5rem; animation-duration:26s;">🎓</div>
+  <div class="gadget" style="top:26%; font-size:2.6rem; animation-duration:24s; animation-delay:-8s;">📱</div>
+  <div class="gadget" style="top:32%; font-size:3.4rem; animation-duration:32s;">🖥️</div>
+  <div class="gadget" style="top:38%; font-size:2.7rem; animation-duration:20s; animation-delay:-12s;">🧮</div>
+  <div class="gadget" style="top:44%; font-size:3.1rem; animation-duration:29s;">📊</div>
+  <div class="gadget" style="top:50%; font-size:2.9rem; animation-duration:25s; animation-delay:-6s;">🧑‍💻</div>
+  <div class="gadget" style="top:56%; font-size:3.6rem; animation-duration:34s;">🖱️</div>
+  <div class="gadget" style="top:62%; font-size:2.4rem; animation-duration:21s; animation-delay:-9s;">🔌</div>
+  <div class="gadget" style="top:68%; font-size:3.3rem; animation-duration:27s;">💾</div>
+  <div class="gadget" style="top:74%; font-size:2.8rem; animation-duration:31s; animation-delay:-14s;">📂</div>
+  <div class="gadget" style="top:80%; font-size:3.5rem; animation-duration:36s;">📎</div>
+  <div class="gadget" style="top:86%; font-size:2.6rem; animation-duration:23s;">⌨️</div>
+  <div class="gadget" style="top:92%; font-size:3.2rem; animation-duration:33s; animation-delay:-11s;">🛜</div>
+</div>
+
+<header>
+  <h1>Choose Your Mini Game 🎮</h1>
+  <p>Pick a game, have fun, and learn smarter!</p>
+
+  <section class="games">
+
+    <div class="game-card">
+      <div class="game-icon">🃏</div>
+      <h2>ICT Quiz</h2>
+      <p>Test your memory by answering ict questions as fast as possible.</p>
+      <a href="https://bryceabi-alt.github.io/minigames/ictquizzes.html" class="play-btn">
+        Play Game
+      </a>
+    </div>
+
+    <div class="game-card">
+      <div class="game-icon">🧩</div>
+      <h2>Click & Drop</h2>
+      <p>Classify ICT components by clicking items and dropping them into the correct category.</p>
+      <a href="https://bryceabi-alt.github.io/minigames/clickanddrop.html" class="play-btn">
+        Play Game
+      </a>
+    </div>
+
+    <div class="game-card">
+      <div class="game-icon">🚀</div>
+      <h2>Coming Soon</h2>
+      <p>More exciting mini-games will be added soon.</p>
+      <a href="#" class="play-btn">Locked</a>
+    </div>
+
+  </section>
+</header>
+
+<footer>
+  © 2026 • Gamified Learning • ICT • Pangkat Tatlo
+</footer>
+
+</body>
+</html>
