@@ -48,7 +48,7 @@ p{max-width:900px;margin:10px auto 20px}
   font-size:1rem;
 }
 
-/* ITEMS (BIG BEFORE DROP) */
+/* ITEMS */
 .item{
   padding:16px;
   margin:8px;
@@ -57,7 +57,12 @@ p{max-width:900px;margin:10px auto 20px}
   font-weight:700;
   font-size:1rem;
   box-shadow:0 4px 10px rgba(0,0,0,.1);
-  cursor:pointer;
+  cursor:grab;
+  user-select:none;
+}
+
+.item:active{
+  cursor:grabbing;
 }
 
 .item.selected{
@@ -65,12 +70,11 @@ p{max-width:900px;margin:10px auto 20px}
   color:white;
 }
 
-/* VERY SMALL ITEMS INSIDE DROP BOX */
+/* ITEMS INSIDE BOX */
 .box .item{
   margin:0;
   padding:4px 6px;
   font-size:0.65rem;
-  line-height:1;
   border-radius:6px;
   box-shadow:none;
   background:#e5edff;
@@ -95,7 +99,7 @@ button{
   box-shadow:0 6px 0 #1e40af;
 }
 
-/* MOBILE TWEAKS */
+/* MOBILE */
 @media(max-width:600px){
   .box{width:100%}
   .item{width:92%;margin:10px auto}
@@ -106,7 +110,7 @@ button{
 <body>
 
 <h1>ICT Click & Drop</h1>
-<p>📘 Tap an item to select, then tap the correct category to drop your answer.</p>
+<p>📘 Drag an item and drop it into the correct category.</p>
 
 <p id="scoreBox">Score: <span id="score">0</span> / 20</p>
 
@@ -118,65 +122,84 @@ button{
 </div>
 
 <div class="container">
-  <div class="item" data-type="network">📶 Wi-Fi</div>
-  <div class="item" data-type="storage">⚡ SSD</div>
-  <div class="item" data-type="storage">💾 Flash Drive</div>
-  <div class="item" data-type="network">🔀 Switch</div>
-  <div class="item" data-type="hardware">🧠 CPU</div>
-  <div class="item" data-type="software">🪟 Windows</div>
-  <div class="item" data-type="software">📄 MS Word</div>
-  <div class="item" data-type="software">📊 Excel</div>
-  <div class="item" data-type="network">📡 Router</div>
-  <div class="item" data-type="hardware">🖥️ Monitor</div>
-  <div class="item" data-type="network">🌐 Modem</div>
-  <div class="item" data-type="storage">📀 Memory Card</div>
-  <div class="item" data-type="software">🌍 Chrome</div>
-  <div class="item" data-type="hardware">🖱️ Mouse</div>
-  <div class="item" data-type="hardware">🖨️ Printer</div>
-  <div class="item" data-type="software">📽️ PowerPoint</div>
-  <div class="item" data-type="network">🔗 LAN</div>
-  <div class="item" data-type="storage">💽 Hard Drive</div>
-  <div class="item" data-type="storage">☁️ Cloud Storage</div>
-  <div class="item" data-type="hardware">⌨️ Keyboard</div>
+  <div class="item" draggable="true" data-type="network">📶 Wi-Fi</div>
+  <div class="item" draggable="true" data-type="storage">⚡ SSD</div>
+  <div class="item" draggable="true" data-type="storage">💾 Flash Drive</div>
+  <div class="item" draggable="true" data-type="network">🔀 Switch</div>
+  <div class="item" draggable="true" data-type="hardware">🧠 CPU</div>
+  <div class="item" draggable="true" data-type="software">🪟 Windows</div>
+  <div class="item" draggable="true" data-type="software">📄 MS Word</div>
+  <div class="item" draggable="true" data-type="software">📊 Excel</div>
+  <div class="item" draggable="true" data-type="network">📡 Router</div>
+  <div class="item" draggable="true" data-type="hardware">🖥️ Monitor</div>
+  <div class="item" draggable="true" data-type="network">🌐 Modem</div>
+  <div class="item" draggable="true" data-type="storage">📀 Memory Card</div>
+  <div class="item" draggable="true" data-type="software">🌍 Chrome</div>
+  <div class="item" draggable="true" data-type="hardware">🖱️ Mouse</div>
+  <div class="item" draggable="true" data-type="hardware">🖨️ Printer</div>
+  <div class="item" draggable="true" data-type="software">📽️ PowerPoint</div>
+  <div class="item" draggable="true" data-type="network">🔗 LAN</div>
+  <div class="item" draggable="true" data-type="storage">💽 Hard Drive</div>
+  <div class="item" draggable="true" data-type="storage">☁️ Cloud Storage</div>
+  <div class="item" draggable="true" data-type="hardware">⌨️ Keyboard</div>
 </div>
 
 <p id="msg"></p>
 <button onclick="location.reload()">Restart Game</button>
 
 <script>
-let selectedItem=null;
-let placed=0, correct=0;
 
-document.querySelectorAll('.item').forEach(item=>{
-  item.addEventListener('click',()=>{
-    if(item.dataset.done) return;
-    document.querySelectorAll('.item').forEach(i=>i.classList.remove('selected'));
+let selectedItem=null;
+let placed=0;
+let correct=0;
+
+/* DRAG ITEMS */
+document.querySelectorAll(".item").forEach(item=>{
+  item.addEventListener("dragstart",(e)=>{
     selectedItem=item;
-    item.classList.add('selected');
+    setTimeout(()=> item.style.display="none", 0);
+  });
+
+  item.addEventListener("dragend",()=>{
+    if(!item.dataset.done){
+      item.style.display="block";
+    }
   });
 });
 
-document.querySelectorAll('.box').forEach(box=>{
-  box.addEventListener('click',()=>{
+/* DROP BOXES */
+document.querySelectorAll(".box").forEach(box=>{
+
+  box.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+  });
+
+  box.addEventListener("drop",(e)=>{
+    e.preventDefault();
+
     if(!selectedItem) return;
 
     selectedItem.dataset.done="true";
     box.appendChild(selectedItem);
+    selectedItem.style.display="block";
 
-    if(selectedItem.dataset.type===box.dataset.type){
+    if(selectedItem.dataset.type === box.dataset.type){
       selectedItem.dataset.correct="true";
     }
 
-    selectedItem.classList.remove('selected');
     selectedItem=null;
     placed++;
 
-    if(placed===20) reveal();
+    if(placed===20){
+      reveal();
+    }
   });
 });
 
+/* RESULT */
 function reveal(){
   document.getElementById("scoreBox").style.display="block";
+
   document.querySelectorAll(".item").forEach(i=>{
     if(i.dataset.correct==="true"){
       i.classList.add("correct");
@@ -185,9 +208,11 @@ function reveal(){
       i.classList.add("wrongItem");
     }
   });
+
   document.getElementById("score").textContent=correct;
-  document.getElementById("msg").textContent="🎉 Results revealed! Review your answers.";
+  document.getElementById("msg").textContent="🎉 Results revealed! Great job!";
 }
+
 </script>
 
 </body>
