@@ -195,8 +195,22 @@ footer{
   background:#64748b !important;
   box-shadow:0 6px 0 #334155 !important;
 }
+.link-btn {
+  background:transparent !important;
+  color:#2563eb !important;
+  box-shadow:none !important;
+  text-decoration:underline;
+  font-size:.95rem !important;
+  padding:6px !important;
+}
 .auth-error {
   color:#dc2626;
+  font-weight:600;
+  margin-top:10px;
+  min-height:24px;
+}
+.auth-info {
+  color:#16a34a;
   font-weight:600;
   margin-top:10px;
   min-height:24px;
@@ -378,6 +392,63 @@ footer{
   text-transform:uppercase;
 }
 
+/* Email Simulation Modal */
+.email-modal {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:100;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+.email-modal.active{display:flex;}
+.email-content {
+  background:#fff;
+  border-radius:var(--radius);
+  padding:var(--pad);
+  max-width:500px;
+  width:100%;
+  box-shadow:0 30px 60px rgba(0,0,0,.3);
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{
+  from{transform:translateY(-30px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+.email-header {
+  background:#dbeafe;
+  margin:calc(var(--pad) * -1) calc(var(--pad) * -1) 16px;
+  padding:16px var(--pad);
+  border-radius:var(--radius) var(--radius) 0 0;
+  border-bottom:3px solid #3b82f6;
+}
+.email-header h3 {
+  margin:0;
+  color:#1d4ed8;
+  font-size:1.3rem;
+}
+.email-header p {
+  margin:4px 0 0;
+  font-size:.9rem;
+  color:#475569;
+}
+.email-body p{margin:10px 0; font-size:.95rem;}
+.reset-token-display {
+  background:#1e293b;
+  color:#fbbf24;
+  padding:16px;
+  border-radius:8px;
+  font-family:monospace;
+  font-size:1.4rem;
+  letter-spacing:4px;
+  text-align:center;
+  font-weight:700;
+  margin:14px 0;
+  word-break:break-all;
+}
+
 @media(min-width:1024px){
   .options{
     display:flex;
@@ -433,10 +504,59 @@ footer{
   <input type="password" id="teacherPassword" placeholder="Password (min 6 characters)">
   <input type="text" id="teacherDisplayName" placeholder="Your Display Name (for registration)" style="display:none;">
   <button id="teacherSubmit">Login</button>
+  <button class="link-btn" id="forgotPasswordBtn">🔑 Forgot Password?</button>
   <button class="auth-toggle" id="teacherToggle">Don't have an account? Register</button>
   <button class="back-btn" id="teacherBack">⬅ Back</button>
   <div class="auth-error" id="teacherError"></div>
 </section>
+
+<!-- FORGOT PASSWORD: Request Reset -->
+<section class="auth-box" id="forgotPasswordBox">
+  <h2>🔑 Forgot Password</h2>
+  <p>Enter your registered Gmail. A reset code will be sent to your email.</p>
+  <input type="email" id="forgotEmail" placeholder="Your registered Gmail">
+  <button id="sendResetBtn">📧 Send Reset Code</button>
+  <button class="link-btn" id="haveCodeBtn">I already have a reset code</button>
+  <button class="back-btn" id="forgotBack">⬅ Back to Login</button>
+  <div class="auth-error" id="forgotError"></div>
+  <div class="auth-info" id="forgotInfo"></div>
+</section>
+
+<!-- RESET PASSWORD: Enter token + new password -->
+<section class="auth-box" id="resetPasswordBox">
+  <h2>🔒 Reset Password</h2>
+  <p>Enter the reset code sent to your email and your new password.</p>
+  <input type="email" id="resetEmailInput" placeholder="Your Gmail">
+  <input type="text" id="resetTokenInput" placeholder="Reset code from email" style="letter-spacing:2px;">
+  <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)">
+  <input type="password" id="confirmPasswordInput" placeholder="Confirm new password">
+  <button id="confirmResetBtn" class="success-btn">✅ Reset Password</button>
+  <button class="back-btn" id="resetBack">⬅ Back</button>
+  <div class="auth-error" id="resetError"></div>
+  <div class="auth-info" id="resetInfo"></div>
+</section>
+
+<!-- EMAIL SIMULATION MODAL -->
+<div class="email-modal" id="emailModal">
+  <div class="email-content">
+    <div class="email-header">
+      <h3>📧 Email Received</h3>
+      <p><strong>From:</strong> no-reply@ictquizzes.com</p>
+      <p><strong>To:</strong> <span id="modalEmailTo"></span></p>
+      <p><strong>Subject:</strong> Password Reset Code</p>
+    </div>
+    <div class="email-body">
+      <p>Hello <span id="modalUserName"></span>,</p>
+      <p>You requested a password reset for your ICT Quizzes teacher account. Please use the code below to reset your password. This code is valid for <strong>15 minutes</strong>.</p>
+      <div class="reset-token-display" id="modalResetToken"></div>
+      <p style="font-size:.85rem;color:#64748b;">If you didn't request this, you can safely ignore this email.</p>
+    </div>
+    <div class="controls">
+      <button class="success-btn" id="modalUseCodeBtn">Use This Code</button>
+      <button class="back-btn" id="modalCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- STUDENT REGISTER -->
 <section class="auth-box" id="studentAuth">
@@ -520,6 +640,7 @@ footer{
   <p style="text-align:center;">Logged in as: <strong id="teacherEmailDisplay"></strong></p>
   <div class="controls">
     <button id="createNewQuizBtn" class="success-btn">➕ Create New Quiz</button>
+    <button id="changePasswordBtn" class="small-btn">🔑 Change Password</button>
   </div>
   <div id="myQuizzesList"></div>
   <div class="controls">
@@ -595,11 +716,13 @@ const defaultQuestions = [
   quizzes:  { quizId: { id, code, title, desc, ownerEmail, ownerName, visibility, questions:[], createdAt } }
   students: { nameKey: { name, attempts: { quizId: count } } }
   leaderboard: [ { quizId, name, level, score, total, date } ]
+  resetTokens: { email: { token, expiresAt } }
 */
 let teachers    = JSON.parse(localStorage.getItem('ict_teachers'))    || {};
 let quizzes     = JSON.parse(localStorage.getItem('ict_quizzes'))     || {};
 let students    = JSON.parse(localStorage.getItem('ict_students_v2')) || {};
 let leaderboard = JSON.parse(localStorage.getItem('ict_leaderboard_v2')) || [];
+let resetTokens = JSON.parse(localStorage.getItem('ict_reset_tokens')) || {};
 let currentUser = null;
 let isRegistering = false;
 let currentQuizId = null;       // quiz being taken
@@ -610,6 +733,7 @@ function saveTeachers(){ localStorage.setItem('ict_teachers', JSON.stringify(tea
 function saveQuizzes(){ localStorage.setItem('ict_quizzes', JSON.stringify(quizzes)); }
 function saveStudents(){ localStorage.setItem('ict_students_v2', JSON.stringify(students)); }
 function saveLeaderboard(){ localStorage.setItem('ict_leaderboard_v2', JSON.stringify(leaderboard)); }
+function saveResetTokens(){ localStorage.setItem('ict_reset_tokens', JSON.stringify(resetTokens)); }
 
 // ID / code generators
 function genId(){ return 'q_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -622,8 +746,14 @@ function genCode(){
   } while(Object.values(quizzes).some(q=>q.code===c));
   return c;
 }
+function genResetToken(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+  let t = '';
+  for(let i=0;i<8;i++) t += chars[Math.floor(Math.random()*chars.length)];
+  return t;
+}
 
-// First-run: seed a sample quiz from defaults so students see something
+// First-run: seed a sample quiz
 if(Object.keys(quizzes).length===0){
   const sampleId = genId();
   quizzes[sampleId] = {
@@ -662,6 +792,8 @@ teacherPanel=document.getElementById("teacherPanel"),
 teacherDashboard=document.getElementById("teacherDashboard"),
 accessCodeBox=document.getElementById("accessCodeBox"),
 publicQuizzesBox=document.getElementById("publicQuizzesBox"),
+forgotPasswordBox=document.getElementById("forgotPasswordBox"),
+resetPasswordBox=document.getElementById("resetPasswordBox"),
 topNav=document.getElementById("topNav"),
 welcomeMsg=document.getElementById("welcomeMsg"),
 quizTitleHeader=document.getElementById("quizTitleHeader");
@@ -678,6 +810,8 @@ function hideAll(){
   leaderboardBox.style.display="none";
   teacherPanel.style.display="none";
   teacherDashboard.style.display="none";
+  forgotPasswordBox.style.display="none";
+  resetPasswordBox.style.display="none";
 }
 
 // ============ ROLE SELECTION ============
@@ -696,6 +830,7 @@ document.getElementById("teacherRoleBtn").onclick=()=>{
   document.getElementById("teacherSubmit").textContent="Login";
   document.getElementById("teacherToggle").textContent="Don't have an account? Register";
   document.getElementById("teacherDisplayName").style.display="none";
+  document.getElementById("forgotPasswordBtn").style.display="inline-block";
   document.getElementById("teacherError").textContent="";
 };
 
@@ -709,6 +844,7 @@ document.getElementById("teacherToggle").onclick=()=>{
   document.getElementById("teacherSubmit").textContent=isRegistering?"Register":"Login";
   document.getElementById("teacherToggle").textContent=isRegistering?"Already have an account? Login":"Don't have an account? Register";
   document.getElementById("teacherDisplayName").style.display=isRegistering?"block":"none";
+  document.getElementById("forgotPasswordBtn").style.display=isRegistering?"none":"inline-block";
   document.getElementById("teacherError").textContent="";
 };
 
@@ -734,6 +870,133 @@ document.getElementById("teacherSubmit").onclick=()=>{
     currentUser={role:"teacher",email,displayName:teachers[email].displayName};
     openTeacherDashboard();
   }
+};
+
+// ============ FORGOT / RESET PASSWORD ============
+document.getElementById("forgotPasswordBtn").onclick=()=>{
+  hideAll();
+  forgotPasswordBox.style.display="block";
+  document.getElementById("forgotEmail").value=document.getElementById("teacherEmail").value || "";
+  document.getElementById("forgotError").textContent="";
+  document.getElementById("forgotInfo").textContent="";
+};
+
+document.getElementById("forgotBack").onclick=()=>{
+  hideAll();
+  teacherAuth.style.display="block";
+};
+
+document.getElementById("sendResetBtn").onclick=()=>{
+  const email=document.getElementById("forgotEmail").value.trim().toLowerCase();
+  const errEl=document.getElementById("forgotError");
+  const infoEl=document.getElementById("forgotInfo");
+  errEl.textContent=""; infoEl.textContent="";
+
+  if(!email.endsWith("@gmail.com")){ errEl.textContent="Please enter a valid Gmail address."; return; }
+  if(!teachers[email]){ errEl.textContent="No account found with that email."; return; }
+
+  // Generate & store token (expires in 15 min)
+  const token=genResetToken();
+  const expiresAt=Date.now()+15*60*1000;
+  resetTokens[email]={token, expiresAt};
+  saveResetTokens();
+
+  // Show simulated email modal
+  document.getElementById("modalEmailTo").textContent=email;
+  document.getElementById("modalUserName").textContent=teachers[email].displayName||"Teacher";
+  document.getElementById("modalResetToken").textContent=token;
+  document.getElementById("emailModal").classList.add("active");
+
+  infoEl.textContent="✅ Reset code sent to your email! (Check the popup)";
+};
+
+document.getElementById("haveCodeBtn").onclick=()=>{
+  hideAll();
+  resetPasswordBox.style.display="block";
+  document.getElementById("resetEmailInput").value=document.getElementById("forgotEmail").value||"";
+  document.getElementById("resetError").textContent="";
+  document.getElementById("resetInfo").textContent="";
+};
+
+document.getElementById("modalCloseBtn").onclick=()=>{
+  document.getElementById("emailModal").classList.remove("active");
+};
+
+document.getElementById("modalUseCodeBtn").onclick=()=>{
+  document.getElementById("emailModal").classList.remove("active");
+  const email=document.getElementById("forgotEmail").value.trim().toLowerCase();
+  const token=document.getElementById("modalResetToken").textContent;
+  hideAll();
+  resetPasswordBox.style.display="block";
+  document.getElementById("resetEmailInput").value=email;
+  document.getElementById("resetTokenInput").value=token;
+  document.getElementById("newPasswordInput").value="";
+  document.getElementById("confirmPasswordInput").value="";
+  document.getElementById("resetError").textContent="";
+  document.getElementById("resetInfo").textContent="";
+};
+
+document.getElementById("resetBack").onclick=()=>{
+  hideAll();
+  forgotPasswordBox.style.display="block";
+};
+
+document.getElementById("confirmResetBtn").onclick=()=>{
+  const email=document.getElementById("resetEmailInput").value.trim().toLowerCase();
+  const token=document.getElementById("resetTokenInput").value.trim().toUpperCase();
+  const newPass=document.getElementById("newPasswordInput").value;
+  const confirmPass=document.getElementById("confirmPasswordInput").value;
+  const errEl=document.getElementById("resetError");
+  const infoEl=document.getElementById("resetInfo");
+  errEl.textContent=""; infoEl.textContent="";
+
+  if(!email || !teachers[email]){ errEl.textContent="Email not found."; return; }
+  const stored=resetTokens[email];
+  if(!stored){ errEl.textContent="No reset code found. Please request a new one."; return; }
+  if(Date.now()>stored.expiresAt){
+    delete resetTokens[email]; saveResetTokens();
+    errEl.textContent="Reset code has expired. Please request a new one.";
+    return;
+  }
+  if(stored.token!==token){ errEl.textContent="Invalid reset code."; return; }
+  if(newPass.length<6){ errEl.textContent="New password must be at least 6 characters."; return; }
+  if(newPass!==confirmPass){ errEl.textContent="Passwords don't match."; return; }
+
+  // Update password
+  teachers[email].password=newPass;
+  saveTeachers();
+  // Invalidate token
+  delete resetTokens[email]; saveResetTokens();
+
+  infoEl.textContent="✅ Password reset successful! Redirecting to login...";
+  setTimeout(()=>{
+    hideAll();
+    teacherAuth.style.display="block";
+    document.getElementById("teacherEmail").value=email;
+    document.getElementById("teacherPassword").value="";
+    document.getElementById("teacherError").textContent="";
+    isRegistering=false;
+    document.getElementById("teacherAuthTitle").textContent="Teacher Login";
+    document.getElementById("teacherSubmit").textContent="Login";
+    document.getElementById("teacherToggle").textContent="Don't have an account? Register";
+    document.getElementById("teacherDisplayName").style.display="none";
+    document.getElementById("forgotPasswordBtn").style.display="inline-block";
+  },1500);
+};
+
+// ============ CHANGE PASSWORD (from dashboard) ============
+document.getElementById("changePasswordBtn").onclick=()=>{
+  const oldPass=prompt("Enter your current password:");
+  if(oldPass===null) return;
+  if(teachers[currentUser.email].password!==oldPass){ alert("❌ Incorrect current password."); return; }
+  const newPass=prompt("Enter new password (min 6 characters):");
+  if(newPass===null) return;
+  if(newPass.length<6){ alert("❌ Password too short."); return; }
+  const confirmPass=prompt("Confirm new password:");
+  if(confirmPass!==newPass){ alert("❌ Passwords don't match."); return; }
+  teachers[currentUser.email].password=newPass;
+  saveTeachers();
+  alert("✅ Password updated successfully!");
 };
 
 // ============ TEACHER DASHBOARD (My Quizzes) ============
@@ -802,7 +1065,6 @@ function viewQuizLeaderboard(id){
   topNav.style.display="block";
   renderLeaderboard(id);
   document.getElementById("leaderboardQuizName").textContent=` — ${quizzes[id].title}`;
-  // add a back button area temporarily
   if(!document.getElementById("tempLbBack")){
     const btn=document.createElement("button");
     btn.id="tempLbBack";
@@ -958,7 +1220,6 @@ document.getElementById("studentSubmit").onclick=()=>{
   if(!students[key]) students[key]={name, attempts:{}};
   currentUser={role:"student", name, key};
   saveStudents();
-  // after registering, show access code / browse screen
   hideAll();
   topNav.style.display="block";
   accessCodeBox.style.display="block";
@@ -1018,7 +1279,6 @@ function enterQuiz(quizId){
   currentQuizId=quizId;
   isPreviewMode=false;
 
-  // check attempts for this specific quiz
   const stu=students[currentUser.key];
   if(!stu.attempts) stu.attempts={};
   const used=stu.attempts[quizId]||0;
@@ -1037,7 +1297,6 @@ function enterQuiz(quizId){
   document.getElementById("leaderboardQuizName").textContent=` — ${qz.title}`;
 }
 
-// expose for inline handlers
 window.editQuiz=editQuiz;
 window.deleteQuiz=deleteQuiz;
 window.copyToClipboard=copyToClipboard;
@@ -1243,11 +1502,9 @@ function renderLeaderboard(quizId){
   if(!code) return;
   const quiz=Object.values(quizzes).find(q=>q.code===code.toUpperCase());
   if(!quiz){ alert("Quiz link invalid or quiz not found."); return; }
-  // Prompt student registration first
   hideAll();
   studentAuth.style.display="block";
   document.getElementById("studentError").textContent=`You're joining: "${quiz.title}". Register to start.`;
-  // Override submit once
   const oldHandler=document.getElementById("studentSubmit").onclick;
   document.getElementById("studentSubmit").onclick=()=>{
     const name=document.getElementById("studentName").value.trim();
@@ -1257,13 +1514,11 @@ function renderLeaderboard(quizId){
     if(!students[key]) students[key]={name,attempts:{}};
     currentUser={role:"student",name,key};
     saveStudents();
-    // restore original handler for future
     document.getElementById("studentSubmit").onclick=oldHandler;
     enterQuiz(quiz.id);
   };
 })();
 
-// initial
 renderLeaderboard();
 </script>
 </body>
