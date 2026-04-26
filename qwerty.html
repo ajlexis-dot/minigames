@@ -104,7 +104,6 @@ box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;align-items:center;gap:6px;
 .spinner{width:60px;height:60px;border:6px solid #dbeafe;border-top-color:#1d4ed8;border-radius:50%;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ========== HUB / GAME SELECTOR ========== */
 .hub-header{
 min-height:40vh;padding:var(--pad);display:flex;flex-direction:column;
 justify-content:center;align-items:center;text-align:center;
@@ -133,8 +132,9 @@ font-family:'Poppins',sans-serif;font-weight:600;
 }
 .play-btn:active{transform:translateY(2px);box-shadow:0 4px 0 #1e40af;}
 .play-btn.locked{background:#94a3b8;box-shadow:0 6px 0 #64748b;cursor:not-allowed;}
+.game-card-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+.game-card-actions button{width:auto;max-width:none;padding:8px 14px!important;font-size:.85rem!important;margin:0!important;}
 
-/* ========== LMS PANELS ========== */
 .lms-panel{
 width:100%;max-width:1100px;margin:20px auto;background:#fff;
 padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);
@@ -156,6 +156,12 @@ margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s eas
 .badge-public{background:#dcfce7;color:#166534;}
 .badge-code{background:#fef9c3;color:#854d0e;}
 .badge-new{background:#dbeafe;color:#1e40af;animation:pulse 2s infinite;}
+.badge-grade{padding:6px 14px;font-size:1.1rem;font-weight:700;border-radius:12px;display:inline-block;margin:8px 0;}
+.grade-A{background:#dcfce7;color:#166534;border:2px solid #16a34a;}
+.grade-B{background:#dbeafe;color:#1e40af;border:2px solid #3b82f6;}
+.grade-C{background:#fef3c7;color:#854d0e;border:2px solid #f59e0b;}
+.grade-D{background:#fed7aa;color:#9a3412;border:2px solid #ea580c;}
+.grade-F{background:#fecaca;color:#991b1b;border:2px solid #dc2626;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
 .q-editor{background:#f8fafc;padding:16px;border-radius:var(--radius);margin:12px 0;border:2px solid #e2e8f0;}
@@ -175,7 +181,10 @@ margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s eas
 .leaderboard-section tr:nth-child(2) td{background:#f1f5f9;font-weight:600;}
 .leaderboard-section tr:nth-child(3) td{background:#fde68a;}
 
-/* Admin Panel */
+.lb-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:14px 0;}
+.lb-tabs button{flex:1 1 120px;max-width:180px;padding:10px!important;font-size:.95rem!important;background:#cbd5e1!important;color:#1e293b!important;box-shadow:0 4px 0 #94a3b8!important;}
+.lb-tabs button.active{background:#3b82f6!important;color:#fff!important;box-shadow:0 4px 0 #1e40af!important;}
+
 .admin-header{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:20px;border-radius:var(--radius);margin-bottom:20px;text-align:center;position:relative;}
 .admin-header h2{color:#fff!important;margin:0;}
 .admin-header p{color:#e9d5ff;margin:6px 0 0;}
@@ -220,7 +229,6 @@ margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s eas
 .code-fallback input{width:100%;max-width:280px;padding:10px;font-size:1rem;border:2px solid #f59e0b;border-radius:10px;margin:8px 0;letter-spacing:3px;text-transform:uppercase;text-align:center;font-family:'Poppins',sans-serif;}
 .code-fallback button{background:#f59e0b!important;box-shadow:0 4px 0 #b45309!important;max-width:280px;}
 
-/* ====== GAME IFRAMES ====== */
 .game-frame-container{
 position:fixed;inset:0;z-index:50;background:#f8fafc;display:none;
 flex-direction:column;
@@ -229,16 +237,23 @@ flex-direction:column;
 .game-frame-topbar{
 display:flex;align-items:center;justify-content:space-between;
 padding:8px 16px;background:#fff;border-bottom:2px solid #dbeafe;
-box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:51;
+box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:51;gap:8px;flex-wrap:wrap;
 }
-.game-frame-topbar h3{color:#1d4ed8;font-size:1rem;margin:0;}
+.game-frame-topbar h3{color:#1d4ed8;font-size:1rem;margin:0;flex:1;min-width:120px;}
 .game-frame-topbar button{
-max-width:120px;padding:6px 14px!important;font-size:.85rem!important;margin:0!important;
+max-width:160px;padding:6px 14px!important;font-size:.85rem!important;margin:0!important;
 }
 .game-frame-topbar .exit-game-btn{background:#dc2626!important;box-shadow:0 4px 0 #991b1b!important;}
+.game-frame-topbar .submit-score-btn{background:#16a34a!important;box-shadow:0 4px 0 #166534!important;}
 .game-iframe{flex:1;border:none;width:100%;}
 
-/* ====== ICT QUIZ GAME (INLINE) ====== */
+.score-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:160;display:none;justify-content:center;align-items:center;padding:20px;}
+.score-modal.active{display:flex;}
+.score-content{background:#fff;border-radius:var(--radius);padding:var(--pad);max-width:500px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,.3);text-align:center;animation:slideIn .3s ease;}
+.score-content h2{color:#1d4ed8;margin-bottom:10px;}
+.score-content input{width:100%;max-width:200px;padding:12px;font-size:1.3rem;border:2px solid #3b82f6;border-radius:10px;margin:8px 0;text-align:center;font-family:'Poppins',sans-serif;font-weight:700;}
+.score-display{font-size:3rem;font-weight:700;color:#1d4ed8;margin:10px 0;}
+
 .quiz-game-box{
 width:100%;max-width:1000px;margin:20px auto;background:#fff;
 padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);
@@ -312,7 +327,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <button id="logoutBtn">Logout</button>
 </div>
 
-<!-- ========== SCREEN: ROLE SELECT ========== -->
+<!-- ROLE SELECT -->
 <div class="screen" id="roleScreen">
 <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--pad);text-align:center;">
 <h1 style="font-size:var(--title);color:#1d4ed8;margin-bottom:10px;">🎓 ICT Gamified Learning Hub</h1>
@@ -323,7 +338,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: ADMIN AUTH ========== -->
+<!-- ADMIN AUTH -->
 <div class="screen" id="adminAuthScreen">
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--pad);">
 <div class="auth-box">
@@ -342,7 +357,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: TEACHER AUTH ========== -->
+<!-- TEACHER AUTH -->
 <div class="screen" id="teacherAuthScreen">
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--pad);">
 <div class="auth-box">
@@ -364,7 +379,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: FORGOT PASSWORD ========== -->
+<!-- FORGOT PASSWORD -->
 <div class="screen" id="forgotPasswordScreen">
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--pad);">
 <div class="auth-box">
@@ -380,7 +395,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: RESET PASSWORD ========== -->
+<!-- RESET PASSWORD -->
 <div class="screen" id="resetPasswordScreen">
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--pad);">
 <div class="auth-box">
@@ -404,7 +419,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: STUDENT AUTH ========== -->
+<!-- STUDENT AUTH -->
 <div class="screen" id="studentAuthScreen">
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--pad);">
 <div class="auth-box">
@@ -419,7 +434,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: STUDENT HUB (Game Selector) ========== -->
+<!-- STUDENT HUB -->
 <div class="screen" id="studentHubScreen">
 <div class="hub-header">
 <h1>Choose Your Mini Game 🎮</h1>
@@ -436,13 +451,19 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="game-icon">🧩</div>
 <h2>Drag & Drop</h2>
 <p>Classify ICT components by dragging items into the correct category.</p>
+<div class="game-card-actions">
 <button class="play-btn" id="playDragDropBtn">Play Game</button>
+<button class="play-btn" style="background:#7c3aed;box-shadow:0 6px 0 #5b21b6;" id="dragDropLbBtn">🏆 Leaderboard</button>
+</div>
 </div>
 <div class="game-card">
 <div class="game-icon">🂡</div>
 <h2>Card Game</h2>
 <p>Match cards, test your memory, and challenge your focus in this fun card game.</p>
+<div class="game-card-actions">
 <button class="play-btn" id="playCardGameBtn">Play Game</button>
+<button class="play-btn" style="background:#7c3aed;box-shadow:0 6px 0 #5b21b6;" id="cardGameLbBtn">🏆 Leaderboard</button>
+</div>
 </div>
 <div class="game-card">
 <div class="game-icon">🚀</div>
@@ -454,7 +475,20 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <footer>© 2026 • Gamified Learning • ICT • Pangkat Tatlo</footer>
 </div>
 
-<!-- ========== SCREEN: STUDENT QUIZ BROWSER ========== -->
+<!-- MINIGAME LEADERBOARD -->
+<div class="screen" id="minigameLbScreen">
+<div class="leaderboard-section lms-panel">
+<h2 id="minigameLbTitle">🏆 Leaderboard</h2>
+<p style="text-align:center;color:#475569;" id="minigameLbDesc">Top 10 highest scores</p>
+<table><thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead>
+<tbody id="minigameLbBody"></tbody></table>
+<div class="controls">
+<button class="back-btn" id="minigameLbBack">⬅ Back to Games</button>
+</div>
+</div>
+</div>
+
+<!-- STUDENT QUIZ BROWSER -->
 <div class="screen" id="studentQuizBrowser">
 <div class="lms-panel">
 <h2>📚 Available ICT Quizzes</h2>
@@ -474,7 +508,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: DIFFICULTY SELECT ========== -->
+<!-- DIFFICULTY SELECT -->
 <div class="screen" id="difficultyScreen">
 <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--pad);text-align:center;">
 <h1 id="quizTitleHeader" style="font-size:clamp(1.6rem,5vw,2.8rem);color:#1d4ed8;">ICT Quiz</h1>
@@ -488,12 +522,12 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 <div class="leaderboard-section lms-panel" id="leaderboardBox" style="margin-bottom:40px;">
 <h2>🏆 Live Leaderboard <span id="leaderboardQuizName" style="font-size:.6em;color:#475569;"></span></h2>
-<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Date</th></tr></thead>
+<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead>
 <tbody id="leaderboardBody"></tbody></table>
 </div>
 </div>
 
-<!-- ========== SCREEN: QUIZ GAME (ICT QUIZ INLINE) ========== -->
+<!-- QUIZ GAME -->
 <div class="screen" id="quizGameScreen">
 <div class="quiz-game-box">
 <div class="counter" id="iqCounter"></div>
@@ -509,23 +543,24 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: QUIZ RESULT ========== -->
+<!-- QUIZ RESULT -->
 <div class="screen" id="quizResultScreen">
 <div class="quiz-game-box result">
 <h2>Quiz Complete 🎉</h2>
 <p>Your Score: <span id="iqScore"></span></p>
+<div id="iqGradeDisplay"></div>
 <p id="iqFinalAttempts"></p>
 <button id="iqRestartAllBtn">⬅ Back to Difficulty</button>
 <button id="iqResultHomeBtn" class="back-btn">🏠 Home</button>
 </div>
 <div class="leaderboard-section lms-panel" id="resultLeaderboard" style="margin-bottom:40px;">
 <h2>🏆 Leaderboard</h2>
-<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Date</th></tr></thead>
+<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead>
 <tbody id="resultLeaderboardBody"></tbody></table>
 </div>
 </div>
 
-<!-- ========== SCREEN: TEACHER DASHBOARD ========== -->
+<!-- TEACHER DASHBOARD -->
 <div class="screen" id="teacherDashScreen">
 <div class="lms-panel">
 <h2>👩‍🏫 My Quizzes</h2>
@@ -533,6 +568,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="controls">
 <button id="createNewQuizBtn" class="success-btn">➕ Create New Quiz</button>
 <button id="changePasswordBtn" class="small-btn">🔑 Change Password</button>
+<button id="viewMinigameLbBtn" class="small-btn admin-btn">🎮 View Mini-game Scores</button>
 </div>
 <div id="myQuizzesList"></div>
 <div class="controls">
@@ -541,7 +577,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: TEACHER QUIZ EDITOR ========== -->
+<!-- TEACHER QUIZ EDITOR -->
 <div class="screen" id="teacherEditorScreen">
 <div class="lms-panel">
 <h2 id="editorTitle">📝 Edit Quiz</h2>
@@ -577,11 +613,11 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: TEACHER LEADERBOARD VIEW ========== -->
+<!-- TEACHER LEADERBOARD VIEW -->
 <div class="screen" id="teacherLeaderboardScreen">
 <div class="leaderboard-section lms-panel">
 <h2>🏆 Leaderboard <span id="teacherLbQuizName" style="font-size:.6em;color:#475569;"></span></h2>
-<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Date</th></tr></thead>
+<table><thead><tr><th>Rank</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead>
 <tbody id="teacherLbBody"></tbody></table>
 <div class="controls">
 <button class="back-btn" id="teacherLbBack">⬅ Back to My Quizzes</button>
@@ -589,7 +625,27 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== SCREEN: ADMIN DASHBOARD ========== -->
+<!-- TEACHER MINIGAME LEADERBOARD -->
+<div class="screen" id="teacherMinigameLbScreen">
+<div class="lms-panel">
+<h2>🎮 Mini-game Leaderboards</h2>
+<div class="lb-tabs">
+<button class="active" data-game="dragdrop">🧩 Drag & Drop</button>
+<button data-game="cardgame">🂡 Card Game</button>
+</div>
+<div class="leaderboard-section">
+<h2 id="teacherMgTitle">🧩 Drag & Drop Top 20</h2>
+<table><thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
+<tbody id="teacherMgBody"></tbody></table>
+</div>
+<div class="controls">
+<button class="warn-btn small-btn" id="clearMgScoresBtn">🧹 Clear This Game's Scores</button>
+<button class="back-btn" id="teacherMgBack">⬅ Back</button>
+</div>
+</div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
 <div class="screen" id="adminDashScreen">
 <div class="lms-panel">
 <div class="admin-header">
@@ -602,7 +658,8 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <button class="active" data-tab="teachers">👩‍🏫 Teachers</button>
 <button data-tab="students">👨‍🎓 Students</button>
 <button data-tab="quizzes">📚 Quizzes</button>
-<button data-tab="scores">🏆 All Scores</button>
+<button data-tab="scores">🏆 Quiz Scores</button>
+<button data-tab="minigames">🎮 Mini-game Scores</button>
 </div>
 
 <div class="admin-section active" id="adminTeachers">
@@ -643,8 +700,22 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="controls">
 <button class="delete-btn small-btn" id="clearAllScoresBtn">🧹 Clear ALL Scores</button>
 </div>
-<div class="table-wrapper"><table class="data-table"><thead><tr><th>Student</th><th>Quiz</th><th>Level</th><th>Score</th><th>Date</th><th>Action</th></tr></thead>
+<div class="table-wrapper"><table class="data-table"><thead><tr><th>Student</th><th>Quiz</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
 <tbody id="scoresTableBody"></tbody></table></div>
+</div>
+
+<div class="admin-section" id="adminMinigames">
+<h3 style="color:#6b21a8;">Mini-game Scores</h3>
+<div class="lb-tabs">
+<button class="active" data-mgame="dragdrop">🧩 Drag & Drop</button>
+<button data-mgame="cardgame">🂡 Card Game</button>
+</div>
+<input type="text" class="search-box" id="mgSearch" placeholder="🔍 Search by student name...">
+<div class="controls">
+<button class="delete-btn small-btn" id="clearAllMgScoresBtn">🧹 Clear Selected Game's Scores</button>
+</div>
+<div class="table-wrapper"><table class="data-table"><thead><tr><th>Student</th><th>Game</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
+<tbody id="mgTableBody"></tbody></table></div>
 </div>
 
 <div class="controls" style="margin-top:24px;">
@@ -654,16 +725,39 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- ========== GAME FRAME (for Drag&Drop and Card Game) ========== -->
+<!-- GAME FRAME -->
 <div class="game-frame-container" id="gameFrameContainer">
 <div class="game-frame-topbar">
 <h3 id="gameFrameTitle">Game</h3>
+<button class="submit-score-btn" id="submitScoreBtn">💾 Submit My Score</button>
 <button class="exit-game-btn" id="exitGameBtn">✕ Exit Game</button>
 </div>
 <iframe class="game-iframe" id="gameIframe" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
 </div>
 
-<!-- ========== EMAIL MODAL ========== -->
+<!-- SCORE SUBMIT MODAL -->
+<div class="score-modal" id="scoreModal">
+<div class="score-content">
+<h2 id="scoreModalTitle">🎮 Submit Your Score</h2>
+<p id="scoreModalDesc">Enter your final score from the game.</p>
+<div id="autoScoreDisplay" style="display:none;">
+<p style="color:#16a34a;font-weight:700;">✨ Score detected automatically!</p>
+<div class="score-display" id="autoScoreNum">0</div>
+</div>
+<div id="manualScoreInput">
+<p style="font-size:.9rem;color:#475569;">📝 Type the score shown in the game (out of <span id="scoreMaxDisplay">100</span>):</p>
+<input type="number" id="scoreInput" min="0" placeholder="0">
+</div>
+<div id="scoreGradePreview" style="margin:14px 0;"></div>
+<div class="controls">
+<button class="success-btn" id="confirmScoreBtn">✅ Submit Score</button>
+<button class="back-btn" id="cancelScoreBtn">Cancel</button>
+</div>
+<div class="auth-error" id="scoreError"></div>
+</div>
+</div>
+
+<!-- EMAIL MODAL -->
 <div class="email-modal" id="emailModal">
 <div class="email-content">
 <div class="email-header">
@@ -687,7 +781,6 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 
 <footer>© 2026 • Gamified Learning • Pangkat Tatlo • ☁️ Cloud-Synced</footer>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -710,11 +803,9 @@ window.__firebase = { db, auth, doc, getDoc, setDoc, onSnapshot, signInAnonymous
 </script>
 
 <script>
-// ============ ADMIN CREDENTIALS ============
 const ADMIN_USERNAME = "alexispogi";
 const ADMIN_PASSWORD = "aresict";
 
-// ============ DEFAULT QUESTIONS ============
 const defaultQuestions = [
 {q:"What does ICT stand for?",o:["Information and Communication Technology","Internet Computer Tool","International Coding Tech","Information Control Tool"],a:0,l:"easy",e:"ICT combines computing and communications."},
 {q:"Which is an input device?",o:["Monitor","Keyboard","Printer","Speaker"],a:1,l:"easy",e:"Keyboard is used to input data."},
@@ -738,16 +829,34 @@ const defaultQuestions = [
 {q:"What is ethical ICT use?",o:["Hacking","Piracy","Citing sources","Spamming"],a:2,l:"hard",e:"Citing sources is ethical."}
 ];
 
-// ============ CLOUD DATABASE ============
 let teachers = {};
 let quizzes = {};
 let students = {};
 let leaderboard = [];
 let resetTokens = {};
+let minigameScores = { dragdrop: [], cardgame: [] };
 let dbReady = false;
 
 const SESSION_KEY = 'ict_hub_session_v4';
 const $=id=>document.getElementById(id);
+
+// ============ GRADING SYSTEM ============
+function calculateGrade(score, total) {
+const pct = total > 0 ? (score / total) * 100 : 0;
+if (pct >= 90) return { letter: 'A', label: 'Excellent', class: 'grade-A', pct };
+if (pct >= 80) return { letter: 'B', label: 'Very Good', class: 'grade-B', pct };
+if (pct >= 70) return { letter: 'C', label: 'Good', class: 'grade-C', pct };
+if (pct >= 60) return { letter: 'D', label: 'Fair', class: 'grade-D', pct };
+return { letter: 'F', label: 'Needs Practice', class: 'grade-F', pct };
+}
+function gradeBadge(score, total) {
+const g = calculateGrade(score, total);
+return `<span class="badge-grade ${g.class}">${g.letter} (${g.pct.toFixed(0)}%)</span>`;
+}
+function gradeBadgeSmall(score, total) {
+const g = calculateGrade(score, total);
+return `<span class="badge ${g.class}" style="font-weight:700;">${g.letter}</span>`;
+}
 
 function setCloudStatus(state, msg) {
 const el=$("cloudIndicator"), txt=$("cloudStatus");
@@ -777,6 +886,7 @@ if(!snap.exists()) {
 const sampleId = genId();
 const initialData = {
 teachers:{}, students:{}, leaderboard:[], resetTokens:{},
+minigameScores:{dragdrop:[],cardgame:[]},
 quizzes:{ [sampleId]:{ id:sampleId, code:genCode({}), title:"ICT Basics (Sample)", desc:"Demo quiz with default ICT questions.", ownerEmail:"system@gmail.com", ownerName:"System", visibility:"public", questions:JSON.parse(JSON.stringify(defaultQuestions)), createdAt:new Date().toISOString() }}
 };
 await fb.setDoc(dref, initialData);
@@ -801,6 +911,9 @@ return false;
 function applyCloudData(data) {
 teachers=data.teachers||{}; quizzes=data.quizzes||{}; students=data.students||{};
 leaderboard=data.leaderboard||[]; resetTokens=data.resetTokens||{};
+minigameScores=data.minigameScores||{dragdrop:[],cardgame:[]};
+if(!minigameScores.dragdrop) minigameScores.dragdrop=[];
+if(!minigameScores.cardgame) minigameScores.cardgame=[];
 }
 
 let saveTimer=null;
@@ -809,7 +922,7 @@ if(!dbReady){ toast("Not connected","error"); return; }
 setCloudStatus("syncing","Saving...");
 try {
 const fb=window.__firebase;
-await fb.setDoc(fb.doc(fb.db,'app_data','main'),{teachers,quizzes,students,leaderboard,resetTokens});
+await fb.setDoc(fb.doc(fb.db,'app_data','main'),{teachers,quizzes,students,leaderboard,resetTokens,minigameScores});
 setCloudStatus("online","Online");
 } catch(err){ console.error(err); setCloudStatus("offline","Save failed"); toast("⚠️ Save failed","error"); }
 }
@@ -822,13 +935,15 @@ if(currentUser?.role==="student" && $("studentQuizBrowser").classList.contains("
 if(currentUser?.role==="teacher" && $("teacherDashScreen").classList.contains("active")) renderMyQuizzes();
 }
 
-// ============ SESSION ============
 let currentUser = null;
 let isRegistering = false;
 let currentQuizId = null;
 let editingQuizId = null;
 let isPreviewMode = false;
 let editorFromAdmin = false;
+let activeMinigame = null; // 'dragdrop' or 'cardgame'
+let detectedScore = null;
+let detectedMaxScore = null;
 
 function saveSession(remember) {
 if(!currentUser) return;
@@ -869,7 +984,6 @@ const ta=document.createElement("textarea"); ta.value=text; document.body.append
 });
 }
 
-// ============ SCREEN MANAGEMENT ============
 function showScreen(id) {
 document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
 const el=$(id);
@@ -895,7 +1009,6 @@ showScreen("roleScreen"); updateTopNav();
 toast("👋 Logged out","info");
 }
 
-// ============ PASSWORD TOGGLE ============
 document.querySelectorAll(".toggle-pass").forEach(btn=>{
 btn.onclick=()=>{
 const inp=$(btn.dataset.target); if(!inp) return;
@@ -904,7 +1017,6 @@ btn.textContent=inp.type==="password"?"👁️":"🙈";
 };
 });
 
-// ============ ROLE SELECT ============
 $("studentRoleBtn").onclick=()=>{ showScreen("studentAuthScreen"); $("studentError").textContent=""; $("studentName").value=""; };
 $("teacherRoleBtn").onclick=()=>{
 showScreen("teacherAuthScreen"); isRegistering=false;
@@ -919,7 +1031,6 @@ $("studentBack").onclick=()=>showScreen("roleScreen");
 $("teacherBack").onclick=()=>showScreen("roleScreen");
 $("adminBack").onclick=()=>showScreen("roleScreen");
 
-// ============ ADMIN LOGIN ============
 $("adminSubmit").onclick=()=>{
 const u=$("adminUsername").value.trim(), p=$("adminPassword").value, remember=$("rememberMeAdmin").checked;
 if(u!==ADMIN_USERNAME||p!==ADMIN_PASSWORD){ $("adminError").textContent="❌ Invalid admin credentials."; toast("❌ Access denied","error"); return; }
@@ -927,7 +1038,6 @@ currentUser={role:"admin",name:"Administrator"}; saveSession(remember);
 toast("🛡️ Admin login successful","admin"); openAdminDashboard();
 };
 
-// ============ TEACHER AUTH ============
 $("teacherToggle").onclick=()=>{
 isRegistering=!isRegistering;
 $("teacherAuthTitle").textContent=isRegistering?"Teacher Registration":"Teacher Login";
@@ -959,7 +1069,6 @@ toast(`Welcome back, ${currentUser.displayName}!`,"success"); openTeacherDashboa
 }
 };
 
-// ============ FORGOT / RESET PASSWORD ============
 $("forgotPasswordBtn").onclick=()=>{ showScreen("forgotPasswordScreen"); $("forgotEmail").value=$("teacherEmail").value||""; $("forgotError").textContent=""; $("forgotInfo").textContent=""; };
 $("forgotBack").onclick=()=>showScreen("teacherAuthScreen");
 $("sendResetBtn").onclick=()=>{
@@ -1010,7 +1119,6 @@ const cp=prompt("Confirm:"); if(cp!==np){ toast("❌ Don't match","error"); retu
 teachers[currentUser.email].password=np; saveAll(); toast("✅ Password updated!","success");
 };
 
-// ============ STUDENT AUTH ============
 $("studentSubmit").onclick=()=>{
 const name=$("studentName").value.trim(), remember=$("rememberMeStudent").checked;
 if(name.length<2){ $("studentError").textContent="Min 2 characters."; return; }
@@ -1020,7 +1128,6 @@ currentUser={role:"student",name,key}; saveAll(); saveSession(remember);
 toast(`Welcome, ${name}! 👋`,"success"); openStudentHub();
 };
 
-// ============ STUDENT HUB ============
 function openStudentHub() {
 showScreen("studentHubScreen"); updateTopNav();
 $("studentHubWelcome").textContent=`Welcome, ${currentUser.name}! Pick a game, have fun, and learn smarter!`;
@@ -1031,21 +1138,131 @@ showScreen("studentQuizBrowser"); renderPublicQuizzes();
 $("accessCodeError").textContent=""; $("accessCodeInput").value="";
 };
 
-$("playDragDropBtn").onclick=()=>{
-$("gameFrameTitle").textContent="🧩 Drag & Drop";
-$("gameIframe").src="https://bryceabi-alt.github.io/minigames/draganddrop.html";
+// ============ MINIGAME LAUNCH (with score capture) ============
+function launchMinigame(gameKey, title, url) {
+if(!currentUser || currentUser.role !== "student") {
+toast("Please log in as a student first to record scores.","error"); return;
+}
+activeMinigame = gameKey;
+detectedScore = null;
+detectedMaxScore = null;
+$("gameFrameTitle").textContent = title;
+$("gameIframe").src = url;
 $("gameFrameContainer").classList.add("active");
-};
+toast("🎮 When done, click 'Submit My Score' to record!","info");
+}
 
-$("playCardGameBtn").onclick=()=>{
-$("gameFrameTitle").textContent="🂡 Card Game";
-$("gameIframe").src="https://bryceabi-alt.github.io/minigames/cardgame.html";
-$("gameFrameContainer").classList.add("active");
-};
+$("playDragDropBtn").onclick=()=>launchMinigame("dragdrop","🧩 Drag & Drop","https://bryceabi-alt.github.io/minigames/draganddrop.html");
+$("playCardGameBtn").onclick=()=>launchMinigame("cardgame","🂡 Card Game","https://bryceabi-alt.github.io/minigames/cardgame.html");
+
+$("dragDropLbBtn").onclick=()=>showMinigameLeaderboard("dragdrop");
+$("cardGameLbBtn").onclick=()=>showMinigameLeaderboard("cardgame");
 
 $("exitGameBtn").onclick=()=>{
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
+activeMinigame=null;
+};
+
+// ============ POSTMESSAGE LISTENER (auto-detect scores from iframe) ============
+window.addEventListener("message", (event)=>{
+const data = event.data;
+if(!data || typeof data !== "object") return;
+// Accept various score formats from the iframe games
+if(data.type === "GAME_SCORE" || data.score !== undefined) {
+const score = parseInt(data.score);
+const max = parseInt(data.max || data.total || data.maxScore || 100);
+if(!isNaN(score)) {
+detectedScore = score;
+detectedMaxScore = max;
+toast(`✨ Score detected: ${score}/${max}`,"success");
+}
+}
+});
+
+// ============ SUBMIT SCORE BUTTON ============
+$("submitScoreBtn").onclick=()=>{
+if(!activeMinigame || !currentUser || currentUser.role !== "student") {
+toast("Cannot submit score now.","error"); return;
+}
+const gameTitle = activeMinigame === "dragdrop" ? "Drag & Drop" : "Card Game";
+$("scoreModalTitle").textContent = `🎮 Submit ${gameTitle} Score`;
+$("scoreError").textContent="";
+$("scoreInput").value="";
+if(detectedScore !== null) {
+$("autoScoreDisplay").style.display="block";
+$("manualScoreInput").style.display="none";
+$("autoScoreNum").textContent = `${detectedScore} / ${detectedMaxScore}`;
+$("scoreGradePreview").innerHTML = gradeBadge(detectedScore, detectedMaxScore);
+} else {
+$("autoScoreDisplay").style.display="none";
+$("manualScoreInput").style.display="block";
+$("scoreMaxDisplay").textContent = "100";
+$("scoreGradePreview").innerHTML="";
+}
+$("scoreModal").classList.add("active");
+};
+
+$("scoreInput").oninput = ()=>{
+const v = parseInt($("scoreInput").value)||0;
+const max = parseInt($("scoreMaxDisplay").textContent)||100;
+if(v >= 0 && v <= max) {
+$("scoreGradePreview").innerHTML = gradeBadge(v, max);
+} else {
+$("scoreGradePreview").innerHTML="";
+}
+};
+
+$("confirmScoreBtn").onclick=()=>{
+let score, max;
+if(detectedScore !== null) {
+score = detectedScore; max = detectedMaxScore;
+} else {
+score = parseInt($("scoreInput").value);
+max = parseInt($("scoreMaxDisplay").textContent)||100;
+if(isNaN(score) || score < 0) { $("scoreError").textContent="Enter a valid score."; return; }
+if(score > max) { $("scoreError").textContent=`Max score is ${max}.`; return; }
+}
+const grade = calculateGrade(score, max);
+const entry = {
+name: currentUser.name,
+score: score,
+total: max,
+grade: grade.letter,
+percentage: grade.pct,
+date: new Date().toLocaleString()
+};
+if(!minigameScores[activeMinigame]) minigameScores[activeMinigame] = [];
+minigameScores[activeMinigame].push(entry);
+saveAll();
+$("scoreModal").classList.remove("active");
+toast(`🎉 Score submitted! Grade: ${grade.letter}`,"success");
+const pct = grade.pct;
+if(pct === 100) toast("🌟 PERFECT SCORE!","success");
+else if(pct >= 90) toast("🏆 Excellent work!","success");
+detectedScore = null; detectedMaxScore = null;
+};
+
+$("cancelScoreBtn").onclick=()=>$("scoreModal").classList.remove("active");
+
+// ============ MINIGAME LEADERBOARD ============
+function showMinigameLeaderboard(gameKey) {
+const title = gameKey === "dragdrop" ? "🧩 Drag & Drop" : "🂡 Card Game";
+$("minigameLbTitle").textContent = `🏆 ${title} Leaderboard`;
+$("minigameLbDesc").textContent = "Top 10 highest scoring students";
+const scores = (minigameScores[gameKey]||[]).slice().sort((a,b)=>(b.score/b.total)-(a.score/a.total)).slice(0,10);
+const body = $("minigameLbBody");
+if(scores.length === 0) {
+body.innerHTML = `<tr><td colspan="5">No scores yet. Be the first to play!</td></tr>`;
+} else {
+body.innerHTML = scores.map((s,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td><td>${s.score}/${s.total}</td><td>${gradeBadgeSmall(s.score,s.total)}</td><td style="font-size:.85rem;">${s.date}</td></tr>`).join("");
+}
+showScreen("minigameLbScreen"); updateTopNav();
+}
+
+$("minigameLbBack").onclick=()=>{
+if(currentUser?.role==="student") openStudentHub();
+else showScreen("roleScreen");
 };
 
 $("quizBrowserBack").onclick=()=>openStudentHub();
@@ -1092,7 +1309,6 @@ $("leaderboardQuizName").textContent=` — ${qz.title}`;
 }
 window.enterQuiz=enterQuiz;
 
-// ============ DIFFICULTY & INLINE QUIZ GAME ============
 let filtered=[], qIndex=0, qScore=0, currentLevel="", timer=15, timerInterval, qAttempts=0;
 
 document.querySelectorAll("[data-level]").forEach(btn=>{
@@ -1156,18 +1372,20 @@ setTimeout(()=>{ qIndex++; qIndex<filtered.length?loadIqQuestion():showIqResult(
 }
 
 function showIqResult() {
+const grade = calculateGrade(qScore, filtered.length);
 if(currentUser&&currentUser.role==="student"&&!isPreviewMode) {
 if(!students[currentUser.key].attempts) students[currentUser.key].attempts={};
 students[currentUser.key].attempts[currentQuizId]=(students[currentUser.key].attempts[currentQuizId]||0)+1;
-leaderboard.push({quizId:currentQuizId,name:currentUser.name,level:currentLevel,score:qScore,total:filtered.length,date:new Date().toLocaleString()});
+leaderboard.push({quizId:currentQuizId,name:currentUser.name,level:currentLevel,score:qScore,total:filtered.length,grade:grade.letter,date:new Date().toLocaleString()});
 saveAll();
 }
 showScreen("quizResultScreen"); updateTopNav();
 $("iqScore").textContent=`${qScore} / ${filtered.length}`;
+$("iqGradeDisplay").innerHTML = gradeBadge(qScore, filtered.length) + `<p style="margin-top:6px;">${grade.label}</p>`;
 if(isPreviewMode) $("iqFinalAttempts").textContent="Preview mode — not saved.";
 else if(currentUser?.role==="student"){ const u=students[currentUser.key].attempts[currentQuizId]||0; $("iqFinalAttempts").textContent=`Restart Attempts: ${qAttempts} | Quiz Attempts: ${u}/2`; }
 renderLeaderboard(currentQuizId,"resultLeaderboardBody");
-const pct=(qScore/filtered.length)*100;
+const pct=grade.pct;
 if(pct===100) toast("🌟 Perfect!","success"); else if(pct>=70) toast("🎉 Great job!","success");
 }
 
@@ -1202,11 +1420,10 @@ const body=$(tbodyId||"leaderboardBody");
 if(!body) return;
 let entries=quizId?leaderboard.filter(e=>e.quizId===quizId):leaderboard;
 const sorted=[...entries].sort((a,b)=>(b.score/b.total)-(a.score/a.total)).slice(0,10);
-if(sorted.length===0){ body.innerHTML=`<tr><td colspan="5">No scores yet. Be the first!</td></tr>`; return; }
-body.innerHTML=sorted.map((e,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(e.name)}</td><td>${e.level}</td><td>${e.score}/${e.total}</td><td>${e.date}</td></tr>`).join("");
+if(sorted.length===0){ body.innerHTML=`<tr><td colspan="6">No scores yet. Be the first!</td></tr>`; return; }
+body.innerHTML=sorted.map((e,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(e.name)}</td><td>${e.level}</td><td>${e.score}/${e.total}</td><td>${gradeBadgeSmall(e.score,e.total)}</td><td style="font-size:.85rem;">${e.date}</td></tr>`).join("");
 }
 
-// ============ TEACHER DASHBOARD ============
 function openTeacherDashboard() {
 showScreen("teacherDashScreen"); updateTopNav();
 $("teacherEmailDisplay").textContent=`${currentUser.displayName} (${currentUser.email})`;
@@ -1245,9 +1462,50 @@ quizzes[id]={id,code:genCode(),title:"New Quiz",desc:"",ownerEmail:currentUser.e
 saveAll(); editingQuizId=id; toast("✨ Created!","success"); openEditor();
 };
 
+// ============ TEACHER MINIGAME LEADERBOARD ============
+let teacherActiveMg = "dragdrop";
+$("viewMinigameLbBtn").onclick=()=>{
+teacherActiveMg = "dragdrop";
+document.querySelectorAll("#teacherMinigameLbScreen .lb-tabs button").forEach(b=>b.classList.remove("active"));
+document.querySelector("#teacherMinigameLbScreen .lb-tabs button[data-game='dragdrop']").classList.add("active");
+showScreen("teacherMinigameLbScreen"); updateTopNav();
+renderTeacherMg();
+};
+document.querySelectorAll("#teacherMinigameLbScreen .lb-tabs button").forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll("#teacherMinigameLbScreen .lb-tabs button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+teacherActiveMg = btn.dataset.game;
+renderTeacherMg();
+};
+});
+function renderTeacherMg() {
+const title = teacherActiveMg === "dragdrop" ? "🧩 Drag & Drop" : "🂡 Card Game";
+$("teacherMgTitle").textContent = `${title} Top 20`;
+const scores = (minigameScores[teacherActiveMg]||[]).slice().sort((a,b)=>(b.score/b.total)-(a.score/a.total)).slice(0,20);
+const body = $("teacherMgBody");
+if(scores.length === 0) {
+body.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">🎮</div><h3>No scores yet</h3></div></td></tr>`;
+return;
+}
+body.innerHTML = scores.map((s,i)=>{
+const realIdx = (minigameScores[teacherActiveMg]||[]).indexOf(s);
+return `<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td><td>${s.score}/${s.total}</td><td>${gradeBadgeSmall(s.score,s.total)}</td><td style="font-size:.85rem;">${s.date}</td><td><button class="delete-btn" style="padding:6px 10px!important;font-size:.8rem!important;width:auto;max-width:none;margin:0!important;" onclick="deleteMgScore('${teacherActiveMg}',${realIdx})">🗑</button></td></tr>`;
+}).join("");
+}
+window.deleteMgScore = (game, idx)=>{
+if(!confirm("Delete this score?")) return;
+minigameScores[game].splice(idx,1); saveAll(); toast("🗑 Deleted","info"); renderTeacherMg();
+};
+$("teacherMgBack").onclick=()=>openTeacherDashboard();
+$("clearMgScoresBtn").onclick=()=>{
+if(!confirm(`Clear all ${teacherActiveMg} scores?`)) return;
+minigameScores[teacherActiveMg] = []; saveAll();
+toast("🧹 Cleared","info"); renderTeacherMg();
+};
+
 $("teacherDashBack").onclick=()=>{ if(!confirm("Log out?")) return; doLogout(); };
 
-// ============ TEACHER QUIZ EDITOR ============
 function openEditor(fromAdmin) {
 editorFromAdmin=!!fromAdmin;
 showScreen("teacherEditorScreen"); updateTopNav();
@@ -1312,7 +1570,6 @@ $("editorBack").onclick=()=>{
 if(editorFromAdmin){ editorFromAdmin=false; openAdminDashboard(); } else openTeacherDashboard();
 };
 
-// ============ ADMIN DASHBOARD ============
 function openAdminDashboard() {
 showScreen("adminDashScreen"); updateTopNav(); renderAdminStats(); renderAdminTables();
 }
@@ -1320,7 +1577,8 @@ showScreen("adminDashScreen"); updateTopNav(); renderAdminStats(); renderAdminTa
 function renderAdminStats() {
 const tt=Object.keys(teachers).length, ts=Object.keys(students).length, tq=Object.keys(quizzes).length;
 const tsc=leaderboard.length, tqs=Object.values(quizzes).reduce((s,q)=>s+(q.questions?.length||0),0);
-$("adminStats").innerHTML=`<div class="stat-card"><div class="num">${tt}</div><div class="label">👩‍🏫 Teachers</div></div><div class="stat-card"><div class="num">${ts}</div><div class="label">👨‍🎓 Students</div></div><div class="stat-card"><div class="num">${tq}</div><div class="label">📚 Quizzes</div></div><div class="stat-card"><div class="num">${tqs}</div><div class="label">❓ Questions</div></div><div class="stat-card"><div class="num">${tsc}</div><div class="label">🏆 Scores</div></div>`;
+const tmg=(minigameScores.dragdrop?.length||0)+(minigameScores.cardgame?.length||0);
+$("adminStats").innerHTML=`<div class="stat-card"><div class="num">${tt}</div><div class="label">👩‍🏫 Teachers</div></div><div class="stat-card"><div class="num">${ts}</div><div class="label">👨‍🎓 Students</div></div><div class="stat-card"><div class="num">${tq}</div><div class="label">📚 Quizzes</div></div><div class="stat-card"><div class="num">${tqs}</div><div class="label">❓ Questions</div></div><div class="stat-card"><div class="num">${tsc}</div><div class="label">🏆 Quiz Scores</div></div><div class="stat-card"><div class="num">${tmg}</div><div class="label">🎮 Mini-game Scores</div></div>`;
 }
 
 document.querySelectorAll(".admin-tabs button").forEach(btn=>{
@@ -1332,7 +1590,7 @@ $("admin"+btn.dataset.tab.charAt(0).toUpperCase()+btn.dataset.tab.slice(1)).clas
 };
 });
 
-function renderAdminTables(){ renderAdminTeachers(); renderAdminStudents(); renderAdminQuizzes(); renderAdminScores(); }
+function renderAdminTables(){ renderAdminTeachers(); renderAdminStudents(); renderAdminQuizzes(); renderAdminScores(); renderAdminMinigames(); }
 
 function renderAdminTeachers() {
 const f=($("teacherSearch").value||"").toLowerCase();
@@ -1374,12 +1632,43 @@ const t=quizzes[l.quizId]?.title||"(deleted)";
 return l.name.toLowerCase().includes(f)||t.toLowerCase().includes(f);
 });
 const tb=$("scoresTableBody");
-if(!rows.length){ tb.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="icon">🏆</div><h3>No scores</h3></div></td></tr>`; return; }
+if(!rows.length){ tb.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="icon">🏆</div><h3>No scores</h3></div></td></tr>`; return; }
 tb.innerHTML=rows.map(l=>{
 const t=quizzes[l.quizId]?.title||"(deleted)";
-return `<tr><td>${escapeHtml(l.name)}</td><td>${escapeHtml(t)}</td><td>${l.level}</td><td>${l.score}/${l.total}</td><td style="font-size:.8rem;">${l.date}</td><td class="action-cell"><button class="delete-btn" onclick="adminDeleteScore(${leaderboard.indexOf(l)})">🗑</button></td></tr>`;
+return `<tr><td>${escapeHtml(l.name)}</td><td>${escapeHtml(t)}</td><td>${l.level}</td><td>${l.score}/${l.total}</td><td>${gradeBadgeSmall(l.score,l.total)}</td><td style="font-size:.8rem;">${l.date}</td><td class="action-cell"><button class="delete-btn" onclick="adminDeleteScore(${leaderboard.indexOf(l)})">🗑</button></td></tr>`;
 }).join("");
 }
+
+let adminActiveMg = "dragdrop";
+document.querySelectorAll("#adminMinigames .lb-tabs button").forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll("#adminMinigames .lb-tabs button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+adminActiveMg = btn.dataset.mgame;
+renderAdminMinigames();
+};
+});
+function renderAdminMinigames() {
+const f=($("mgSearch").value||"").toLowerCase();
+const gameName = adminActiveMg === "dragdrop" ? "Drag & Drop" : "Card Game";
+const rows = (minigameScores[adminActiveMg]||[]).filter(s=>s.name.toLowerCase().includes(f));
+const tb=$("mgTableBody");
+if(!rows.length){ tb.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="icon">🎮</div><h3>No ${gameName} scores yet</h3></div></td></tr>`; return; }
+tb.innerHTML = rows.map(s=>{
+const realIdx = (minigameScores[adminActiveMg]||[]).indexOf(s);
+return `<tr><td>${escapeHtml(s.name)}</td><td>${gameName}</td><td>${s.score}/${s.total}</td><td>${gradeBadgeSmall(s.score,s.total)}</td><td style="font-size:.8rem;">${s.date}</td><td class="action-cell"><button class="delete-btn" onclick="adminDeleteMgScore('${adminActiveMg}',${realIdx})">🗑</button></td></tr>`;
+}).join("");
+}
+window.adminDeleteMgScore = (game,idx)=>{
+if(!confirm("Delete?")) return;
+minigameScores[game].splice(idx,1); saveAll(); toast("🗑 Deleted","admin"); renderAdminStats(); renderAdminMinigames();
+};
+$("mgSearch").oninput=renderAdminMinigames;
+$("clearAllMgScoresBtn").onclick=()=>{
+if(!confirm(`Clear all ${adminActiveMg} scores?`)) return;
+minigameScores[adminActiveMg] = []; saveAll();
+toast("🧹 Cleared","admin"); renderAdminStats(); renderAdminMinigames();
+};
 
 $("teacherSearch").oninput=renderAdminTeachers;
 $("studentSearch").oninput=renderAdminStudents;
@@ -1413,7 +1702,11 @@ toast("🗑 Deleted","admin"); renderAdminStats(); renderAdminTables();
 window.adminDeleteStudent=key=>{
 if(!confirm(`Delete "${students[key]?.name}"?`)) return;
 const name=students[key]?.name; delete students[key];
-if(name) leaderboard=leaderboard.filter(l=>l.name.toLowerCase()!==name.toLowerCase());
+if(name){
+leaderboard=leaderboard.filter(l=>l.name.toLowerCase()!==name.toLowerCase());
+minigameScores.dragdrop=(minigameScores.dragdrop||[]).filter(s=>s.name.toLowerCase()!==name.toLowerCase());
+minigameScores.cardgame=(minigameScores.cardgame||[]).filter(s=>s.name.toLowerCase()!==name.toLowerCase());
+}
 saveAll(); toast("🗑 Deleted","admin"); renderAdminStats(); renderAdminTables();
 };
 window.adminResetStudentAttempts=key=>{
@@ -1459,7 +1752,7 @@ toast("🗑 All teachers deleted","admin"); renderAdminStats(); renderAdminTable
 $("deleteAllStudentsBtn").onclick=()=>{
 if(!confirm("⚠️ DELETE ALL STUDENTS?")) return;
 if(prompt("Type DELETE:")!=="DELETE") return;
-students={}; leaderboard=[]; saveAll();
+students={}; leaderboard=[]; minigameScores={dragdrop:[],cardgame:[]}; saveAll();
 toast("🗑 All students deleted","admin"); renderAdminStats(); renderAdminTables();
 };
 $("resetAllAttemptsBtn").onclick=()=>{
@@ -1474,12 +1767,11 @@ quizzes={}; leaderboard=[]; saveAll();
 toast("🗑 All quizzes deleted","admin"); renderAdminStats(); renderAdminTables();
 };
 $("clearAllScoresBtn").onclick=()=>{
-if(!confirm("Clear ALL scores?")) return;
+if(!confirm("Clear ALL quiz scores?")) return;
 leaderboard=[]; saveAll(); toast("🧹 All cleared","admin"); renderAdminStats(); renderAdminScores();
 };
 $("adminDashBack").onclick=()=>{ if(!confirm("Logout?")) return; doLogout(); };
 
-// ============ NAVIGATION ============
 $("homeBtn").onclick=()=>{
 $("gameFrameContainer").classList.remove("active"); $("gameIframe").src="about:blank";
 clearInterval(timerInterval);
@@ -1490,7 +1782,6 @@ else openStudentHub();
 };
 $("logoutBtn").onclick=()=>{ if(!confirm("Log out?")) return; doLogout(); };
 
-// ============ SESSION RESTORE ============
 function restoreSession() {
 const savedUser=loadSession();
 const params=new URLSearchParams(location.search);
@@ -1534,7 +1825,6 @@ toast(`Welcome back, ${currentUser.name}!`,"success");
 }
 }
 
-// ============ STARTUP ============
 window.addEventListener("DOMContentLoaded", async()=>{
 const ok=await initCloud();
 if(ok) restoreSession();
@@ -1544,4 +1834,3 @@ $("loadingOverlay").style.display="none";
 </script>
 </body>
 </html>
-```
