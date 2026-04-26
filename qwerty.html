@@ -1166,18 +1166,52 @@ activeMinigame=null;
 
 // ============ POSTMESSAGE LISTENER (auto-detect scores from iframe) ============
 window.addEventListener("message", (event)=>{
-const data = event.data;
-if(!data || typeof data !== "object") return;
-// Accept various score formats from the iframe games
-if(data.type === "GAME_SCORE" || data.score !== undefined) {
-const score = parseInt(data.score);
-const max = parseInt(data.max || data.total || data.maxScore || 100);
-if(!isNaN(score)) {
-detectedScore = score;
-detectedMaxScore = max;
-toast(`✨ Score detected: ${score}/${max}`,"success");
-}
-}
+  const data = event.data;
+  if(!data || typeof data !== "object") return;
+  if(data.type === "GAME_SCORE" || data.score !== undefined) {
+    const score = parseInt(data.score);
+    const max = parseInt(data.max || data.total || data.maxScore || 100);
+    if(isNaN(score)) return;
+
+    // Still keep these for the manual button (fallback)
+    detectedScore = score;
+    detectedMaxScore = max;
+
+    // ⭐ AUTO-SAVE if a student is in an active mini-game
+    if (activeMinigame && currentUser?.role === "student") {
+      const grade = calculateGrade(score, max);
+      if (!minigameScores[activeMinigame]) minigameScores[activeMinigame] = [];
+
+      // Prevent duplicate saves (same score within 3 seconds)
+      const last = minigameScores[activeMinigame][minigameScores[activeMinigame].length - 1];
+      const now = Date.now();
+      if (last && last._ts && (now - last._ts) < 3000 &&
+          last.name === currentUser.name && last.score === score) {
+        return;
+      }
+
+      minigameScores[activeMinigame].push({
+        name: currentUser.name,
+        score: score,
+        total: max,
+        grade: grade.letter,
+        percentage: grade.pct,
+        date: new Date().toLocaleString(),
+        _ts: now
+      });
+      saveAll();
+
+      toast(`🎉 Score auto-saved: ${score}/${max} — Grade ${grade.letter}!`, "success");
+      if (grade.pct === 100) toast("🌟 PERFECT SCORE!", "success");
+      else if (grade.pct >= 90) toast("🏆 Excellent!", "success");
+
+      // Reset detection so a manual click doesn't double-save
+      detectedScore = null;
+      detectedMaxScore = null;
+    } else {
+      toast(`✨ Score detected: ${score}/${max}`, "success");
+    }
+  }
 });
 
 // ============ SUBMIT SCORE BUTTON ============
