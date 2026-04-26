@@ -3,217 +3,404 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICT Click & Drop</title>
-
+<title>ICT Drag & Drop Game</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{
-  font-family:Poppins,sans-serif;
-  background:linear-gradient(135deg,#eef6ff,#dbeafe);
-  text-align:center;
-  margin:0;
-  min-height:100vh;
-  overflow-x:hidden;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#dbeafe,#e0f2fe);
+  min-height:100vh;padding:20px;color:#1e293b;
 }
-
-h1{color:#1d4ed8;margin-top:30px}
-p{max-width:900px;margin:10px auto 20px}
-
-/* CONTAINERS */
-.container{
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  flex-wrap:wrap;
-  padding:10px;
+.container{max-width:1000px;margin:0 auto;}
+h1{text-align:center;color:#1d4ed8;font-size:clamp(1.5rem,5vw,2.4rem);margin-bottom:8px;}
+.info{text-align:center;margin-bottom:16px;font-size:1rem;color:#475569;}
+.stats{
+  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;
 }
-
-/* DROP BOX */
-.box{
-  background:white;
-  padding:12px;
-  border-radius:16px;
-  min-height:180px;
-  width:46%;
-  box-shadow:0 12px 25px rgba(0,0,0,.12);
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+.stat{
+  background:#fff;padding:10px 20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);
+  font-weight:600;font-size:1rem;
 }
-
-.box h3{
-  margin:0 0 6px;
-  color:#2563eb;
-  font-size:1rem;
+.stat span{color:#1d4ed8;font-weight:700;}
+.items-pool{
+  background:#fff;padding:16px;border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.08);
+  margin-bottom:20px;min-height:80px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
 }
-
-/* ITEMS */
 .item{
-  padding:16px;
-  margin:8px;
-  background:#dbeafe;
-  border-radius:14px;
-  font-weight:700;
-  font-size:1rem;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
-  cursor:grab;
-  user-select:none;
+  background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:10px 16px;
+  border-radius:10px;font-weight:600;cursor:grab;box-shadow:0 4px 8px rgba(0,0,0,.15);
+  transition:transform .15s ease;font-size:.95rem;touch-action:none;
 }
-
-.item:active{
-  cursor:grabbing;
+.item:active{cursor:grabbing;transform:scale(1.05);}
+.item.dragging{opacity:.5;}
+.categories{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;
 }
-
-.item.selected{
-  background:#3b82f6;
-  color:white;
+.category{
+  background:#fff;border:3px dashed #94a3b8;border-radius:16px;padding:16px;min-height:180px;
+  transition:border-color .2s ease,background .2s ease;
 }
-
-/* ITEMS INSIDE BOX */
-.box .item{
-  margin:0;
-  padding:4px 6px;
-  font-size:0.65rem;
-  border-radius:6px;
-  box-shadow:none;
-  background:#e5edff;
+.category.over{border-color:#16a34a;background:#dcfce7;}
+.category h3{color:#1d4ed8;text-align:center;margin-bottom:10px;font-size:1.1rem;}
+.category .drop-zone{display:flex;flex-direction:column;gap:6px;min-height:100px;}
+.dropped{
+  background:#dcfce7;color:#166534;padding:8px 12px;border-radius:8px;
+  font-weight:600;font-size:.9rem;border:2px solid #16a34a;
 }
-
-/* RESULT COLORS */
-.correct{background:#dcfce7;border:2px solid #22c55e}
-.wrongItem{background:#fee2e2;border:2px solid #ef4444}
-
-#scoreBox{display:none;font-size:1.2rem;font-weight:700;color:#1e40af}
-#msg{font-size:1.2rem;margin-top:20px;color:#15803d;font-weight:700}
-
+.dropped.wrong{background:#fecaca;color:#991b1b;border-color:#dc2626;}
+.controls{text-align:center;margin-top:24px;}
 button{
-  margin:20px;
-  padding:14px 30px;
-  border:none;
-  border-radius:14px;
-  background:#3b82f6;
-  color:white;
-  font-size:1rem;
-  cursor:pointer;
-  box-shadow:0 6px 0 #1e40af;
+  background:#3b82f6;color:#fff;border:none;padding:14px 28px;font-size:1rem;
+  border-radius:12px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;
+  margin:6px;box-shadow:0 4px 0 #1e40af;transition:transform .1s ease;
 }
-
-/* MOBILE */
-@media(max-width:600px){
-  .box{width:100%}
-  .item{width:92%;margin:10px auto}
+button:active{transform:translateY(2px);box-shadow:0 2px 0 #1e40af;}
+button.success{background:#16a34a;box-shadow:0 4px 0 #166534;}
+button.warn{background:#f59e0b;box-shadow:0 4px 0 #b45309;}
+.result-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;
+  justify-content:center;align-items:center;z-index:100;padding:20px;
+}
+.result-modal.active{display:flex;}
+.result-content{
+  background:#fff;padding:30px;border-radius:20px;text-align:center;max-width:420px;width:100%;
+  animation:pop .4s ease;
+}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.result-content h2{color:#1d4ed8;font-size:2rem;margin-bottom:10px;}
+.score-big{font-size:3rem;font-weight:700;color:#16a34a;margin:14px 0;}
+.grade{
+  display:inline-block;padding:8px 20px;border-radius:12px;font-size:1.4rem;font-weight:700;
+  margin:10px 0;
+}
+.grade-A{background:#dcfce7;color:#166534;}
+.grade-B{background:#dbeafe;color:#1e40af;}
+.grade-C{background:#fef3c7;color:#854d0e;}
+.grade-D{background:#fed7aa;color:#9a3412;}
+.grade-F{background:#fecaca;color:#991b1b;}
+.auto-saved{
+  background:#dcfce7;color:#166534;padding:10px;border-radius:10px;
+  font-weight:600;margin:14px 0;font-size:.95rem;
 }
 </style>
 </head>
-
 <body>
 
-<h1>ICT Click & Drop</h1>
-<p>📘 Drag an item and drop it into the correct category.</p>
-
-<p id="scoreBox">Score: <span id="score">0</span> / 20</p>
-
 <div class="container">
-  <div class="box" data-type="hardware"><h3>🖥️ Hardware</h3></div>
-  <div class="box" data-type="software"><h3>💾 Software</h3></div>
-  <div class="box" data-type="network"><h3>🌐 Network</h3></div>
-  <div class="box" data-type="storage"><h3>📂 Storage</h3></div>
+  <h1>🧩 ICT Drag & Drop</h1>
+  <p class="info">Drag each item into the correct category!</p>
+
+  <div class="stats">
+    <div class="stat">⏱️ Time: <span id="timer">0</span>s</div>
+    <div class="stat">📦 Placed: <span id="placedCount">0</span>/<span id="totalCount">0</span></div>
+    <div class="stat">✅ Correct: <span id="correctCount">0</span></div>
+  </div>
+
+  <div class="items-pool" id="itemsPool"></div>
+
+  <div class="categories" id="categories"></div>
+
+  <div class="controls">
+    <button class="success" onclick="checkAnswers()">✅ Submit Answers</button>
+    <button class="warn" onclick="resetGame()">🔄 Reset</button>
+  </div>
 </div>
 
-<div class="container">
-  <div class="item" draggable="true" data-type="network">📶 Wi-Fi</div>
-  <div class="item" draggable="true" data-type="storage">⚡ SSD</div>
-  <div class="item" draggable="true" data-type="storage">💾 Flash Drive</div>
-  <div class="item" draggable="true" data-type="network">🔀 Switch</div>
-  <div class="item" draggable="true" data-type="hardware">🧠 CPU</div>
-  <div class="item" draggable="true" data-type="software">🪟 Windows</div>
-  <div class="item" draggable="true" data-type="software">📄 MS Word</div>
-  <div class="item" draggable="true" data-type="software">📊 Excel</div>
-  <div class="item" draggable="true" data-type="network">📡 Router</div>
-  <div class="item" draggable="true" data-type="hardware">🖥️ Monitor</div>
-  <div class="item" draggable="true" data-type="network">🌐 Modem</div>
-  <div class="item" draggable="true" data-type="storage">📀 Memory Card</div>
-  <div class="item" draggable="true" data-type="software">🌍 Chrome</div>
-  <div class="item" draggable="true" data-type="hardware">🖱️ Mouse</div>
-  <div class="item" draggable="true" data-type="hardware">🖨️ Printer</div>
-  <div class="item" draggable="true" data-type="software">📽️ PowerPoint</div>
-  <div class="item" draggable="true" data-type="network">🔗 LAN</div>
-  <div class="item" draggable="true" data-type="storage">💽 Hard Drive</div>
-  <div class="item" draggable="true" data-type="storage">☁️ Cloud Storage</div>
-  <div class="item" draggable="true" data-type="hardware">⌨️ Keyboard</div>
+<div class="result-modal" id="resultModal">
+  <div class="result-content">
+    <h2>🎉 Game Complete!</h2>
+    <div class="score-big" id="finalScoreText">0 / 0</div>
+    <div class="grade" id="finalGrade">A</div>
+    <p id="gradeLabel">Excellent!</p>
+    <div class="auto-saved" id="autoSavedMsg">✨ Score automatically saved to leaderboard!</div>
+    <button onclick="resetGame();closeModal();">🔄 Play Again</button>
+  </div>
 </div>
-
-<p id="msg"></p>
-<button onclick="location.reload()">Restart Game</button>
 
 <script>
+// ============ GAME DATA ============
+const GAME_DATA = {
+  categories: [
+    { id: "input", name: "⌨️ Input Devices" },
+    { id: "output", name: "🖥️ Output Devices" },
+    { id: "storage", name: "💾 Storage Devices" },
+    { id: "software", name: "💿 Software" }
+  ],
+  items: [
+    { name: "Keyboard", category: "input" },
+    { name: "Mouse", category: "input" },
+    { name: "Microphone", category: "input" },
+    { name: "Scanner", category: "input" },
+    { name: "Monitor", category: "output" },
+    { name: "Printer", category: "output" },
+    { name: "Speaker", category: "output" },
+    { name: "Hard Drive", category: "storage" },
+    { name: "USB Flash Drive", category: "storage" },
+    { name: "SSD", category: "storage" },
+    { name: "MS Word", category: "software" },
+    { name: "Photoshop", category: "software" }
+  ]
+};
 
-let selectedItem=null;
-let placed=0;
-let correct=0;
+let placed = {};
+let timerSec = 0;
+let timerInterval = null;
+let gameEnded = false;
 
-/* DRAG ITEMS */
-document.querySelectorAll(".item").forEach(item=>{
-  item.addEventListener("dragstart",(e)=>{
-    selectedItem=item;
-    setTimeout(()=> item.style.display="none", 0);
+// ============ INIT ============
+function initGame() {
+  gameEnded = false;
+  placed = {};
+  timerSec = 0;
+
+  // Render categories
+  const catContainer = document.getElementById("categories");
+  catContainer.innerHTML = "";
+  GAME_DATA.categories.forEach(cat => {
+    const div = document.createElement("div");
+    div.className = "category";
+    div.dataset.cat = cat.id;
+    div.innerHTML = `<h3>${cat.name}</h3><div class="drop-zone" data-cat="${cat.id}"></div>`;
+    catContainer.appendChild(div);
   });
 
-  item.addEventListener("dragend",()=>{
-    if(!item.dataset.done){
-      item.style.display="block";
-    }
-  });
-});
-
-/* DROP BOXES */
-document.querySelectorAll(".box").forEach(box=>{
-
-  box.addEventListener("dragover",(e)=>{
-    e.preventDefault();
-  });
-
-  box.addEventListener("drop",(e)=>{
-    e.preventDefault();
-
-    if(!selectedItem) return;
-
-    selectedItem.dataset.done="true";
-    box.appendChild(selectedItem);
-    selectedItem.style.display="block";
-
-    if(selectedItem.dataset.type === box.dataset.type){
-      selectedItem.dataset.correct="true";
-    }
-
-    selectedItem=null;
-    placed++;
-
-    if(placed===20){
-      reveal();
-    }
-  });
-});
-
-/* RESULT */
-function reveal(){
-  document.getElementById("scoreBox").style.display="block";
-
-  document.querySelectorAll(".item").forEach(i=>{
-    if(i.dataset.correct==="true"){
-      i.classList.add("correct");
-      correct++;
-    } else {
-      i.classList.add("wrongItem");
-    }
+  // Render items (shuffled)
+  const pool = document.getElementById("itemsPool");
+  pool.innerHTML = "";
+  const shuffled = [...GAME_DATA.items].sort(() => Math.random() - 0.5);
+  shuffled.forEach((it, i) => {
+    const el = document.createElement("div");
+    el.className = "item";
+    el.draggable = true;
+    el.dataset.id = i;
+    el.dataset.name = it.name;
+    el.dataset.category = it.category;
+    el.textContent = it.name;
+    pool.appendChild(el);
   });
 
-  document.getElementById("score").textContent=correct;
-  document.getElementById("msg").textContent="🎉 Results revealed! Great job!";
+  document.getElementById("totalCount").textContent = GAME_DATA.items.length;
+  document.getElementById("placedCount").textContent = "0";
+  document.getElementById("correctCount").textContent = "0";
+  document.getElementById("timer").textContent = "0";
+
+  setupDragDrop();
+  startTimer();
 }
 
-</script>
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (gameEnded) return;
+    timerSec++;
+    document.getElementById("timer").textContent = timerSec;
+  }, 1000);
+}
 
+// ============ DRAG & DROP (mouse + touch) ============
+let draggedItem = null;
+
+function setupDragDrop() {
+  document.querySelectorAll(".item").forEach(item => {
+    item.addEventListener("dragstart", e => {
+      draggedItem = item;
+      item.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    item.addEventListener("dragend", () => {
+      item.classList.remove("dragging");
+      draggedItem = null;
+    });
+
+    // Touch support
+    item.addEventListener("touchstart", handleTouchStart, { passive: false });
+    item.addEventListener("touchmove", handleTouchMove, { passive: false });
+    item.addEventListener("touchend", handleTouchEnd);
+  });
+
+  document.querySelectorAll(".drop-zone").forEach(zone => {
+    zone.addEventListener("dragover", e => {
+      e.preventDefault();
+      zone.parentElement.classList.add("over");
+    });
+    zone.addEventListener("dragleave", () => {
+      zone.parentElement.classList.remove("over");
+    });
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.parentElement.classList.remove("over");
+      if (draggedItem) dropIntoZone(draggedItem, zone);
+    });
+  });
+}
+
+let touchClone = null;
+let currentTouchTarget = null;
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  draggedItem = e.currentTarget;
+  const rect = draggedItem.getBoundingClientRect();
+  touchClone = draggedItem.cloneNode(true);
+  touchClone.style.position = "fixed";
+  touchClone.style.left = rect.left + "px";
+  touchClone.style.top = rect.top + "px";
+  touchClone.style.width = rect.width + "px";
+  touchClone.style.zIndex = "1000";
+  touchClone.style.opacity = "0.85";
+  touchClone.style.pointerEvents = "none";
+  document.body.appendChild(touchClone);
+  draggedItem.style.opacity = "0.3";
+}
+function handleTouchMove(e) {
+  if (!touchClone) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  touchClone.style.left = (t.clientX - touchClone.offsetWidth / 2) + "px";
+  touchClone.style.top = (t.clientY - touchClone.offsetHeight / 2) + "px";
+
+  // Highlight zone under finger
+  document.querySelectorAll(".category").forEach(c => c.classList.remove("over"));
+  const elBelow = document.elementFromPoint(t.clientX, t.clientY);
+  const zone = elBelow ? elBelow.closest(".drop-zone") : null;
+  currentTouchTarget = zone;
+  if (zone) zone.parentElement.classList.add("over");
+}
+function handleTouchEnd(e) {
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  if (draggedItem) draggedItem.style.opacity = "1";
+  document.querySelectorAll(".category").forEach(c => c.classList.remove("over"));
+  if (currentTouchTarget && draggedItem) {
+    dropIntoZone(draggedItem, currentTouchTarget);
+  }
+  draggedItem = null;
+  currentTouchTarget = null;
+}
+
+function dropIntoZone(item, zone) {
+  const id = item.dataset.id;
+  const targetCat = zone.dataset.cat;
+
+  // Remove from previous location if already placed
+  if (placed[id]) {
+    const prev = document.querySelector(`.dropped[data-id="${id}"]`);
+    if (prev) prev.remove();
+  }
+
+  placed[id] = targetCat;
+
+  const dropped = document.createElement("div");
+  dropped.className = "dropped";
+  dropped.dataset.id = id;
+  dropped.dataset.name = item.dataset.name;
+  dropped.dataset.category = item.dataset.category;
+  dropped.textContent = item.dataset.name;
+  dropped.style.cursor = "pointer";
+  dropped.title = "Click to remove";
+  dropped.onclick = () => {
+    delete placed[id];
+    dropped.remove();
+    item.style.display = "";
+    updateStats();
+  };
+  zone.appendChild(dropped);
+  item.style.display = "none";
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById("placedCount").textContent = Object.keys(placed).length;
+}
+
+// ============ CHECK / SCORE ============
+function checkAnswers() {
+  if (gameEnded) return;
+  if (Object.keys(placed).length === 0) {
+    alert("Please drag items into categories first!");
+    return;
+  }
+  if (Object.keys(placed).length < GAME_DATA.items.length) {
+    if (!confirm(`You've only placed ${Object.keys(placed).length}/${GAME_DATA.items.length} items. Submit anyway?`)) return;
+  }
+
+  gameEnded = true;
+  clearInterval(timerInterval);
+
+  // Score calculation
+  let correct = 0;
+  document.querySelectorAll(".dropped").forEach(d => {
+    const expected = d.dataset.category;
+    const actual = d.parentElement.dataset.cat;
+    if (expected === actual) {
+      correct++;
+    } else {
+      d.classList.add("wrong");
+      d.textContent = `${d.dataset.name} ❌`;
+    }
+  });
+
+  const total = GAME_DATA.items.length;
+  document.getElementById("correctCount").textContent = correct;
+
+  // Show modal
+  showResult(correct, total);
+
+  // ⭐ AUTO-SUBMIT TO HUB
+  sendScoreToHub(correct, total);
+}
+
+function calculateGrade(score, total) {
+  const pct = (score / total) * 100;
+  if (pct >= 90) return { letter: "A", label: "Excellent!", cls: "grade-A" };
+  if (pct >= 80) return { letter: "B", label: "Very Good!", cls: "grade-B" };
+  if (pct >= 70) return { letter: "C", label: "Good!", cls: "grade-C" };
+  if (pct >= 60) return { letter: "D", label: "Fair", cls: "grade-D" };
+  return { letter: "F", label: "Try again!", cls: "grade-F" };
+}
+
+function showResult(score, total) {
+  const g = calculateGrade(score, total);
+  document.getElementById("finalScoreText").textContent = `${score} / ${total}`;
+  const gradeEl = document.getElementById("finalGrade");
+  gradeEl.textContent = g.letter;
+  gradeEl.className = "grade " + g.cls;
+  document.getElementById("gradeLabel").textContent = g.label;
+
+  // Hide auto-save message if not in iframe
+  const inIframe = window.parent && window.parent !== window;
+  document.getElementById("autoSavedMsg").style.display = inIframe ? "block" : "none";
+
+  document.getElementById("resultModal").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("resultModal").classList.remove("active");
+}
+
+function resetGame() {
+  closeModal();
+  initGame();
+}
+
+// ============ ⭐ SEND SCORE TO PARENT HUB ============
+function sendScoreToHub(score, maxScore) {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({
+      type: "GAME_SCORE",
+      game: "dragdrop",
+      score: score,
+      max: maxScore,
+      time: timerSec
+    }, "*");
+    console.log("✅ Score sent to hub:", score, "/", maxScore);
+  } else {
+    console.log("Standalone mode — score not sent.");
+  }
+}
+
+// ============ START ============
+initGame();
+</script>
 </body>
 </html>
