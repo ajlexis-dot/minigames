@@ -401,6 +401,15 @@ function sendScoreToHub(score, maxScore) {
 
 // ============ START ============
 initGame();
+<script>
+// Auto-send score to parent hub
+function sendScoreToHub(score, max) {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: "GAME_SCORE", score: score, max: max }, "*");
+  }
+}
+// Call this when your game ends, e.g.:
+// sendScoreToHub(finalScore, totalQuestions);
 </script>
 </body>
 </html>
