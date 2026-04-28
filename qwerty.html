@@ -677,24 +677,31 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- BULK ADD MODAL -->
+<!-- BULK ADD MODAL (SUPER EASY FORMAT) -->
 <div class="email-modal" id="bulkAddModal">
   <div class="email-content" style="max-width:600px;">
     <div class="email-header" style="background:#fef3c7; border-bottom-color:#f59e0b;">
-      <h3 style="color:#b45309;">📋 Bulk Add Questions</h3>
-      <p>Paste your questions using the format below.</p>
+      <h3 style="color:#b45309;">📋 Quick Bulk Add</h3>
+      <p>Type your questions naturally. No confusing codes needed!</p>
     </div>
     <div class="email-body">
-      <p style="font-size:.9rem; color:#475569;">Separate each question with a blank line. <strong>A:</strong> is the correct answer index (0 = 1st option, 1 = 2nd option, etc.)</p>
-      <pre style="background:#f1f5f9; padding:10px; border-radius:8px; font-size:.85rem; overflow-x:auto; border:1px solid #cbd5e1;">Q: What does CPU stand for?
-O: Central Process Unit
-O: Central Processing Unit
-O: Computer Personal Unit
-O: Central Processor Unit
-A: 1
-L: easy
-E: It is the brain of the computer.</pre>
-      <textarea id="bulkAddTextarea" rows="8" placeholder="Paste your questions here..." style="width:100%; padding:10px; font-size:.95rem; border:2px solid #cbd5e1; border-radius:8px; margin-top:10px; font-family:monospace; resize:vertical;"></textarea>
+      <ul style="font-size:.9rem; color:#475569; margin-left: 20px; margin-bottom: 10px;">
+        <li>Line 1: <strong>The Question</strong></li>
+        <li>Lines below: <strong>The Options</strong></li>
+        <li>Put an <strong>asterisk (*)</strong> next to the correct answer</li>
+        <li>Press <strong>Enter twice</strong> to separate questions</li>
+      </ul>
+      <pre style="background:#f1f5f9; padding:10px; border-radius:8px; font-size:.85rem; overflow-x:auto; border:1px solid #cbd5e1;">What is the brain of the computer?
+Monitor
+Keyboard
+*CPU
+Mouse
+
+Which is an operating system?
+*Windows
+Microsoft Word
+Google Chrome</pre>
+      <textarea id="bulkAddTextarea" rows="8" placeholder="Paste your questions here..." style="width:100%; padding:10px; font-size:.95rem; border:2px solid #cbd5e1; border-radius:8px; margin-top:10px; font-family:'Poppins', sans-serif; resize:vertical;"></textarea>
       <div class="auth-error" id="bulkAddError"></div>
     </div>
     <div class="controls">
@@ -1476,7 +1483,7 @@ quizzes[editingQuizId].questions.push({q:"New Question",o:["A","B","C","D"],a:0,
 saveAll(); renderQuestionsEditor();
 };
 
-// ============ BULK ADD LOGIC ============
+// ============ EXTREMELY EASY BULK ADD LOGIC ============
 $("bulkAddBtn").onclick = () => {
     $("bulkAddTextarea").value = "";
     $("bulkAddError").textContent = "";
@@ -1492,35 +1499,49 @@ $("confirmBulkAddBtn").onclick = () => {
     $("bulkAddError").textContent = "";
     if(!text) { $("bulkAddError").textContent = "Please enter some questions."; return; }
 
+    // Split blocks by double newlines
     const blocks = text.split(/\n\s*\n/);
     let newQuestions = [];
 
     try {
         for(let block of blocks) {
+            // Split lines inside the block, remove empty lines
             let lines = block.split('\n').map(l=>l.trim()).filter(l=>l);
-            if(lines.length === 0) continue;
+            if(lines.length < 3) continue; // Must have at least a Question and 2 Options
 
-            let qObj = { q:"", o:[], a:0, l:"easy", e:"" };
-            for(let line of lines) {
-                const prefix = line.substring(0, 2).toUpperCase();
-                const content = line.substring(2).trim();
+            // Line 0 is the Question
+            let qObj = { q: lines[0], o: [], a: 0, l: "easy", e: "Explanation not provided." };
+            let optIndex = 0;
+
+            // Lines 1 and beyond are options
+            for(let i = 1; i < lines.length; i++) {
+                let line = lines[i];
+
+                let isCorrect = false;
                 
-                if(prefix === "Q:") qObj.q = content;
-                else if(prefix === "O:") qObj.o.push(content);
-                else if(prefix === "A:") qObj.a = parseInt(content);
-                else if(prefix === "L:") qObj.l = content.toLowerCase();
-                else if(prefix === "E:") qObj.e = content;
+                // If the option starts with an asterisk, it is the correct answer
+                if(line.startsWith("*")) { 
+                    isCorrect = true; 
+                    line = line.substring(1).trim(); 
+                } 
+                // Alternatively, if they accidentally put the asterisk at the end
+                else if(line.endsWith("*")) { 
+                    isCorrect = true; 
+                    line = line.substring(0, line.length-1).trim(); 
+                }
+
+                qObj.o.push(line);
+                if(isCorrect) qObj.a = optIndex;
+                optIndex++;
             }
 
-            if(!qObj.q) throw new Error("A question is missing the 'Q:' line.");
-            if(qObj.o.length < 2) throw new Error(`Question "${qObj.q}" must have at least 2 options (O:).`);
-            if(isNaN(qObj.a) || qObj.a < 0 || qObj.a >= qObj.o.length) throw new Error(`Question "${qObj.q}" has an invalid answer index (A:). Remember: 0 is the first option.`);
-            if(!["easy", "medium", "hard"].includes(qObj.l)) qObj.l = "easy";
-
+            if(qObj.o.length < 2) {
+                throw new Error(`Question "${qObj.q}" must have at least 2 options.`);
+            }
             newQuestions.push(qObj);
         }
 
-        if(newQuestions.length === 0) { $("bulkAddError").textContent = "No valid questions found."; return; }
+        if(newQuestions.length === 0) { $("bulkAddError").textContent = "We couldn't find any valid questions. Please follow the format shown."; return; }
 
         quizzes[editingQuizId].questions.push(...newQuestions);
         saveAll();
@@ -1532,7 +1553,7 @@ $("confirmBulkAddBtn").onclick = () => {
         $("bulkAddError").textContent = err.message;
     }
 };
-// =======================================
+// =========================================================
 
 $("saveAllBtn").onclick=()=>{
 const qz=quizzes[editingQuizId];
