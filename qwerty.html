@@ -164,7 +164,8 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .game-frame-topbar h3{color:#1d4ed8;font-size:1rem;margin:0;flex:1;min-width:120px;}
 .game-frame-topbar button{max-width:160px;padding:6px 14px!important;font-size:.85rem!important;margin:0!important;}
 .game-frame-topbar .exit-game-btn{background:#dc2626!important;box-shadow:0 4px 0 #991b1b!important;}
-.auto-save-badge{background:#dcfce7;color:#166534;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;border:2px solid #16a34a;white-space:nowrap;}
+.auto-save-badge{background:#dcfce7;color:#166534;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;border:2px solid #16a34a;white-space:nowrap;cursor:pointer;}
+.manual-save-btn{background:#f59e0b!important;box-shadow:0 4px 0 #b45309!important;}
 @media(max-width:600px){.auto-save-badge{font-size:.7rem;padding:4px 8px;}.game-frame-topbar h3{font-size:.9rem;min-width:100px;}}
 .game-iframe{flex:1;border:none;width:100%;}
 .quiz-game-box{width:100%;max-width:1000px;margin:20px auto;background:#fff;padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);}
@@ -180,6 +181,11 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .result{text-align:center;}
 .result h2{font-size:clamp(2rem,6vw,3.2rem);color:#1d4ed8;}
 footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color:#475569;position:relative;z-index:1;}
+.manual-score-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;justify-content:center;align-items:center;padding:20px;}
+.manual-score-modal.active{display:flex;}
+.manual-score-content{background:#fff;border-radius:var(--radius);padding:var(--pad);max-width:450px;width:100%;text-align:center;}
+.manual-score-content h3{color:#1d4ed8;margin-top:0;}
+.manual-score-content input{width:100%;padding:12px;font-size:1.2rem;border:2px solid #3b82f6;border-radius:8px;margin:8px 0;text-align:center;font-family:'Poppins',sans-serif;}
 @media(max-width:500px){
 .top-nav{top:5px;right:5px;padding:4px 8px;}
 .user-badge{max-width:100px;font-size:.75rem;}
@@ -639,9 +645,26 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="game-frame-topbar">
 <h3 id="gameFrameTitle">Game</h3>
 <span class="auto-save-badge">✨ Auto-saves when game ends</span>
+<button class="manual-save-btn" id="manualSaveBtn">💾 Save Score Manually</button>
 <button class="exit-game-btn" id="exitGameBtn">✕ Exit Game</button>
 </div>
-<iframe class="game-iframe" id="gameIframe" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+<iframe class="game-iframe" id="gameIframe" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+</div>
+
+<!-- MANUAL SCORE MODAL -->
+<div class="manual-score-modal" id="manualScoreModal">
+<div class="manual-score-content">
+<h3>💾 Save Your Score</h3>
+<p>If the game didn't auto-save, enter your score here:</p>
+<label style="display:block;text-align:left;font-weight:600;margin-top:10px;">Your Score:</label>
+<input type="number" id="manualScoreInput" placeholder="e.g., 8" min="0">
+<label style="display:block;text-align:left;font-weight:600;margin-top:10px;">Out of (Max):</label>
+<input type="number" id="manualMaxInput" placeholder="e.g., 10" min="1" value="10">
+<div class="controls">
+<button class="success-btn" id="confirmManualSave">✅ Save Score</button>
+<button class="back-btn" id="cancelManualSave">Cancel</button>
+</div>
+</div>
 </div>
 
 <!-- EMAIL MODAL -->
@@ -666,7 +689,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- BULK ADD MODAL (SUPER EASY FORMAT) -->
+<!-- BULK ADD MODAL -->
 <div class="email-modal" id="bulkAddModal">
   <div class="email-content" style="max-width:600px;">
     <div class="email-header" style="background:#fef3c7; border-bottom-color:#f59e0b;">
@@ -866,6 +889,8 @@ let editorFromAdmin = false;
 let activeMinigame = null;
 let lastSavedScoreKey = null;
 let currentMgView = null;
+let iframePollInterval = null;
+let lastIframeScoreSnapshot = null;
 
 function saveSession(remember) {
 if(!currentUser) return;
@@ -925,6 +950,7 @@ else if(currentUser.role==="admin"){ $("userBadge").textContent=`🛡️ ADMIN`;
 function doLogout() {
 clearSession(); currentUser=null; currentQuizId=null; editingQuizId=null; isPreviewMode=false;
 clearInterval(timerInterval);
+stopIframePolling();
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
 activeMinigame=null; lastSavedScoreKey=null;
@@ -1061,6 +1087,146 @@ showScreen("studentQuizBrowser"); renderPublicQuizzes();
 $("accessCodeError").textContent=""; $("accessCodeInput").value="";
 };
 
+// ============================================================
+// ============ MINIGAME SCORE TRACKING (BULLETPROOF) ==========
+// ============================================================
+
+function injectScoreCatcherIntoIframe(iframe) {
+  // Try to inject a small script INTO the iframe that proxies score events to parent.
+  // This works only if same-origin (which it is since it's hosted on github.io but loaded into our page).
+  // If cross-origin blocks us, the iframe must use postMessage itself - but we also poll as backup.
+  try {
+    const iframeWin = iframe.contentWindow;
+    const iframeDoc = iframe.contentDocument || iframeWin.document;
+    if(!iframeDoc) return;
+
+    // Inject a watcher script that listens for common ways games signal "game over"
+    const script = iframeDoc.createElement('script');
+    script.textContent = `
+      (function(){
+        if(window.__scoreCatcherInstalled) return;
+        window.__scoreCatcherInstalled = true;
+        
+        function sendScore(score, max){
+          try {
+            window.parent.postMessage({type:"GAME_SCORE", score:score, max:max, source:"injected"}, "*");
+          } catch(e){}
+        }
+        
+        // Expose a global function games can call
+        window.reportScore = sendScore;
+        window.submitScore = sendScore;
+        window.saveScore = sendScore;
+        
+        // Watch DOM for game-over indicators
+        function scanForScore(){
+          // Look for text like "Score: X" or "X / Y" or "X out of Y"
+          const bodyText = document.body ? document.body.innerText : '';
+          const patterns = [
+            /(?:final\\s*)?score[:\\s]+(\\d+)\\s*(?:\\/|out of|of)\\s*(\\d+)/i,
+            /(\\d+)\\s*\\/\\s*(\\d+)\\s*(?:correct|points|matches)?/i,
+            /you\\s*(?:got|scored)\\s*(\\d+)\\s*(?:\\/|out of|of)\\s*(\\d+)/i
+          ];
+          for(const p of patterns){
+            const m = bodyText.match(p);
+            if(m){
+              const s = parseInt(m[1]);
+              const t = parseInt(m[2]);
+              if(!isNaN(s) && !isNaN(t) && t > 0 && s <= t){
+                return { score: s, max: t };
+              }
+            }
+          }
+          return null;
+        }
+        
+        // Watch for visible "game over" / "complete" / "finished" elements
+        function checkGameOver(){
+          const result = scanForScore();
+          if(result && (result.score !== window.__lastReportedScore || result.max !== window.__lastReportedMax)){
+            const txt = (document.body?document.body.innerText:'').toLowerCase();
+            const isGameOver = /game\\s*over|finished|complete|congratulations|well done|you won|you lost|final/i.test(txt);
+            if(isGameOver){
+              window.__lastReportedScore = result.score;
+              window.__lastReportedMax = result.max;
+              sendScore(result.score, result.max);
+            }
+          }
+        }
+        
+        setInterval(checkGameOver, 800);
+        
+        // Also intercept localStorage saves (common for games)
+        const origSetItem = localStorage.setItem.bind(localStorage);
+        localStorage.setItem = function(k, v){
+          origSetItem(k, v);
+          // If it looks like a score being saved, notify parent
+          if(/score|highscore|result/i.test(k)){
+            try {
+              window.parent.postMessage({type:"GAME_STORAGE", key:k, value:v}, "*");
+            } catch(e){}
+          }
+        };
+        
+        console.log("✅ Score catcher injected into game iframe");
+      })();
+    `;
+    iframeDoc.head.appendChild(script);
+    console.log("✅ Injection successful");
+    return true;
+  } catch(e) {
+    console.warn("⚠️ Could not inject into iframe (cross-origin?):", e.message);
+    return false;
+  }
+}
+
+function startIframePolling() {
+  stopIframePolling();
+  lastIframeScoreSnapshot = null;
+  iframePollInterval = setInterval(()=>{
+    const iframe = $("gameIframe");
+    if(!iframe || !activeMinigame) return;
+    try {
+      const doc = iframe.contentDocument;
+      if(!doc || !doc.body) return;
+      const text = doc.body.innerText || "";
+      
+      // Scan for score patterns
+      const patterns = [
+        /(?:final\s*)?score[:\s]+(\d+)\s*(?:\/|out of|of)\s*(\d+)/i,
+        /(\d+)\s*\/\s*(\d+)\s*(?:correct|points|matches)?/i,
+        /you\s*(?:got|scored)\s*(\d+)\s*(?:\/|out of|of)\s*(\d+)/i
+      ];
+      
+      for(const p of patterns){
+        const m = text.match(p);
+        if(m){
+          const s = parseInt(m[1]);
+          const t = parseInt(m[2]);
+          if(!isNaN(s) && !isNaN(t) && t > 0 && s <= t){
+            const isGameOver = /game\s*over|finished|complete|congratulations|well done|you won|you lost|final/i.test(text);
+            if(isGameOver){
+              const snapshot = `${s}/${t}`;
+              if(snapshot !== lastIframeScoreSnapshot){
+                lastIframeScoreSnapshot = snapshot;
+                console.log("🎯 Polling detected game-over score:", s, "/", t);
+                recordMinigameScore(s, t);
+              }
+              return;
+            }
+          }
+        }
+      }
+    } catch(e){
+      // cross-origin, skip silently
+    }
+  }, 1000);
+}
+
+function stopIframePolling() {
+  if(iframePollInterval){ clearInterval(iframePollInterval); iframePollInterval = null; }
+}
+
 // ============ MINIGAME LAUNCH ============
 function launchMinigame(gameKey, title, url) {
 if(!currentUser || currentUser.role !== "student") {
@@ -1068,17 +1234,25 @@ toast("Please log in as a student first to record scores.","error"); return;
 }
 activeMinigame = gameKey;
 lastSavedScoreKey = null;
+lastIframeScoreSnapshot = null;
 $("gameFrameTitle").textContent = title;
 const iframe = $("gameIframe");
 iframe.src = url;
 $("gameFrameContainer").classList.add("active");
-toast("🎮 Have fun! Score will save automatically when game ends.","info");
+toast("🎮 Have fun! Your score will save when the game ends.","info");
 
-// Tell the iframe (when loaded) that parent is ready to receive scores
 iframe.onload = ()=>{
-try {
-iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser.name }, "*");
-} catch(e){}
+  console.log("📺 Iframe loaded:", url);
+  // Try to inject score catcher
+  setTimeout(()=>{
+    injectScoreCatcherIntoIframe(iframe);
+  }, 500);
+  // Tell game we're ready
+  try {
+    iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser.name }, "*");
+  } catch(e){}
+  // Start polling backup
+  startIframePolling();
 };
 }
 
@@ -1089,10 +1263,34 @@ $("dragDropLbBtn").onclick=()=>showMinigameLeaderboard("dragdrop");
 $("cardGameLbBtn").onclick=()=>showMinigameLeaderboard("cardgame");
 
 $("exitGameBtn").onclick=()=>{
+stopIframePolling();
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
 activeMinigame=null;
 lastSavedScoreKey=null;
+};
+
+// ============ MANUAL SAVE BUTTON ============
+$("manualSaveBtn").onclick=()=>{
+  if(!activeMinigame){ toast("No active game","error"); return; }
+  $("manualScoreInput").value="";
+  $("manualMaxInput").value="10";
+  $("manualScoreModal").classList.add("active");
+  setTimeout(()=>$("manualScoreInput").focus(),100);
+};
+
+$("cancelManualSave").onclick=()=>$("manualScoreModal").classList.remove("active");
+
+$("confirmManualSave").onclick=()=>{
+  const score = parseInt($("manualScoreInput").value);
+  const max = parseInt($("manualMaxInput").value);
+  if(isNaN(score) || score < 0){ toast("Enter a valid score","error"); return; }
+  if(isNaN(max) || max < 1){ toast("Enter a valid max","error"); return; }
+  if(score > max){ toast("Score can't be higher than max","error"); return; }
+  $("manualScoreModal").classList.remove("active");
+  // Force allow save by resetting dedup
+  lastSavedScoreKey = null;
+  recordMinigameScore(score, max);
 };
 
 // ============ CORE: RECORD MINIGAME SCORE ============
@@ -1100,7 +1298,14 @@ function recordMinigameScore(score, max) {
 if(!activeMinigame){ toast("⚠️ No active game session","error"); return; }
 if(!currentUser || currentUser.role !== "student"){ toast("⚠️ Not logged in as student","error"); return; }
 
-const dedupKey = `${activeMinigame}_${score}_${max}_${currentUser.name}_${Math.floor(Date.now()/5000)}`;
+score = parseInt(score);
+max = parseInt(max);
+if(isNaN(score) || isNaN(max) || max <= 0 || score < 0 || score > max){
+  console.warn("Invalid score values:", score, max);
+  return;
+}
+
+const dedupKey = `${activeMinigame}_${score}_${max}_${currentUser.name}_${Math.floor(Date.now()/3000)}`;
 if(lastSavedScoreKey === dedupKey){ console.log("Duplicate ignored"); return; }
 lastSavedScoreKey = dedupKey;
 setTimeout(()=>{ if(lastSavedScoreKey === dedupKey) lastSavedScoreKey = null; }, 5000);
@@ -1119,50 +1324,82 @@ timestamp: Date.now()
 });
 saveAll();
 
-toast(`🎉 Auto-saved: ${score}/${max} — Grade ${grade.letter}!`, "success");
+console.log(`✅ Score saved: ${score}/${max} for ${currentUser.name} in ${activeMinigame}`);
+toast(`🎉 Saved: ${score}/${max} — Grade ${grade.letter}!`, "success");
 if(grade.pct === 100) setTimeout(()=>toast("🌟 PERFECT SCORE!", "success"), 400);
 else if(grade.pct >= 90) setTimeout(()=>toast("🏆 Excellent work!", "success"), 400);
 else if(grade.pct >= 70) setTimeout(()=>toast("👍 Nice job!", "success"), 400);
 }
 
-// ============ MESSAGE LISTENER (handles many formats) ============
+// ============ MESSAGE LISTENER (catches ALL formats) ============
 window.addEventListener("message", (event)=>{
 const data = event.data;
 if(!data) return;
 
-// Skip non-relevant messages
 if(typeof data === "string"){
-// Try parse if string
-try { const p = JSON.parse(data); if(p && typeof p === "object") return handleMessageData(p); } catch(e){ return; }
-return;
+  try { 
+    const p = JSON.parse(data); 
+    if(p && typeof p === "object") return handleMessageData(p); 
+  } catch(e){
+    // Maybe it's "score:5" or "5/10" format
+    const m1 = data.match(/(\d+)\s*\/\s*(\d+)/);
+    if(m1){
+      handleMessageData({score:parseInt(m1[1]), max:parseInt(m1[2])});
+      return;
+    }
+  }
+  return;
 }
 if(typeof data !== "object") return;
 handleMessageData(data);
 });
 
 function handleMessageData(data){
-// Recognized score message types
-const isScoreMsg = data.type === "GAME_SCORE" 
-|| data.type === "score" 
-|| data.type === "GAME_OVER" 
-|| data.type === "gameOver"
-|| data.event === "score"
-|| data.event === "gameOver"
-|| (data.score !== undefined && data.max !== undefined)
-|| (data.score !== undefined && data.total !== undefined)
-|| (data.score !== undefined && data.maxScore !== undefined);
+console.log("📨 Message received:", data);
 
-if(!isScoreMsg) return;
-
-const score = parseInt(data.score ?? data.points ?? data.value);
-const max = parseInt(data.max ?? data.total ?? data.maxScore ?? data.outOf ?? data.max_score ?? 100);
-
-if(isNaN(score) || isNaN(max) || max <= 0){
-console.warn("Invalid score format:", data);
-return;
+// Storage event from injected script
+if(data.type === "GAME_STORAGE" && activeMinigame){
+  // Check if value contains a score
+  try {
+    const v = data.value;
+    if(typeof v === "string"){
+      const m = v.match(/(\d+)\s*\/\s*(\d+)/);
+      if(m){
+        recordMinigameScore(parseInt(m[1]), parseInt(m[2]));
+        return;
+      }
+    }
+  } catch(e){}
 }
 
-console.log("✅ Score message received:", { score, max, raw: data });
+// Try EVERY possible field name
+const scoreFields = ['score','points','value','correct','final','finalScore','playerScore','result','total_score','totalScore'];
+const maxFields = ['max','total','maxScore','outOf','max_score','maximum','target','goal','outof'];
+
+let score, max;
+for(const f of scoreFields){
+  if(data[f] !== undefined && data[f] !== null){
+    score = parseInt(data[f]);
+    if(!isNaN(score)) break;
+  }
+}
+for(const f of maxFields){
+  if(data[f] !== undefined && data[f] !== null){
+    max = parseInt(data[f]);
+    if(!isNaN(max)) break;
+  }
+}
+
+// If we have score but no max, default to 10 (common game length)
+if(!isNaN(score) && (isNaN(max) || !max)){
+  max = 10;
+}
+
+if(isNaN(score) || isNaN(max) || max <= 0){
+  return;
+}
+
+console.log("✅ Score message captured:", { score, max, raw: data });
 recordMinigameScore(score, max);
 }
 
@@ -1459,7 +1696,6 @@ quizzes[editingQuizId].questions.push({q:"New Question",o:["A","B","C","D"],a:0,
 saveAll(); renderQuestionsEditor();
 };
 
-// ============ EXTREMELY EASY BULK ADD LOGIC ============
 $("bulkAddBtn").onclick = () => {
     $("bulkAddTextarea").value = "";
     $("bulkAddError").textContent = "";
@@ -1475,32 +1711,25 @@ $("confirmBulkAddBtn").onclick = () => {
     $("bulkAddError").textContent = "";
     if(!text) { $("bulkAddError").textContent = "Please enter some questions."; return; }
 
-    // Split blocks by double newlines
     const blocks = text.split(/\n\s*\n/);
     let newQuestions = [];
 
     try {
         for(let block of blocks) {
-            // Split lines inside the block, remove empty lines
             let lines = block.split('\n').map(l=>l.trim()).filter(l=>l);
-            if(lines.length < 3) continue; // Must have at least a Question and 2 Options
+            if(lines.length < 3) continue;
 
-            // Line 0 is the Question
             let qObj = { q: lines[0], o: [], a: 0, l: "easy", e: "Explanation not provided." };
             let optIndex = 0;
 
-            // Lines 1 and beyond are options
             for(let i = 1; i < lines.length; i++) {
                 let line = lines[i];
-
                 let isCorrect = false;
                 
-                // If the option starts with an asterisk, it is the correct answer
                 if(line.startsWith("*")) { 
                     isCorrect = true; 
                     line = line.substring(1).trim(); 
                 } 
-                // Alternatively, if they accidentally put the asterisk at the end
                 else if(line.endsWith("*")) { 
                     isCorrect = true; 
                     line = line.substring(0, line.length-1).trim(); 
@@ -1529,7 +1758,6 @@ $("confirmBulkAddBtn").onclick = () => {
         $("bulkAddError").textContent = err.message;
     }
 };
-// =========================================================
 
 $("saveAllBtn").onclick=()=>{
 const qz=quizzes[editingQuizId];
@@ -1767,6 +1995,7 @@ leaderboard=[]; saveAll(); toast("🧹 All cleared","admin"); renderAdminStats()
 $("adminDashBack").onclick=()=>{ if(!confirm("Logout?")) return; doLogout(); };
 
 $("homeBtn").onclick=()=>{
+stopIframePolling();
 $("gameFrameContainer").classList.remove("active"); $("gameIframe").src="about:blank";
 activeMinigame=null; lastSavedScoreKey=null;
 clearInterval(timerInterval);
@@ -1829,4 +2058,3 @@ $("loadingOverlay").style.display="none";
 </script>
 </body>
 </html>
-```
