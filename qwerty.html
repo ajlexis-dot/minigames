@@ -771,25 +771,57 @@ set(ref(db,"lmsData"),data).then(()=>setCloudState("online")).catch(e=>{console.
 },600);
 }
 
-async function initCloud(){
-return new Promise(resolve=>{
-const dataRef=ref(db,"lmsData");
-onValue(dataRef,snapshot=>{
-const d=snapshot.val();
-if(d){
-teachers=d.teachers||{}; students=d.students||{}; quizzes=d.quizzes||{};
-leaderboard=d.leaderboard||[]; resetTokens=d.resetTokens||{};
-minigameScores=d.minigameScores||{dragdrop:[],cardgame:[]};
-}
-setCloudState("online");
-refreshCurrentView();
-resolve(true);
-},error=>{
-console.error("Firebase error:",error);
-setCloudState("offline");
-resolve(false);
-});
-});
+async function initCloud() {
+  setCloudStatus("syncing", "Connecting to Firebase...");
+
+  try {
+    const fb = await waitForFirebase();
+
+    // Sign in anonymously
+    const userCredential = await fb.signInAnonymously(fb.auth);
+    console.log("✅ Anonymous auth successful", userCredential.user.uid);
+
+    const dref = fb.doc(fb.db, 'app_data', 'main');
+    const snap = await fb.getDoc(dref);
+
+    if (!snap.exists()) {
+      const initialData = {
+        teachers: {},
+        students: {},
+        leaderboard: [],
+        resetTokens: {},
+        minigameScores: { dragdrop: [], cardgame: [], twentyquestions: [] },
+        quizzes: {}   // you can add your sample quiz here if needed
+      };
+      await fb.setDoc(dref, initialData);
+      applyCloudData(initialData);
+      toast("📊 Initial cloud data created", "success");
+    } else {
+      applyCloudData(snap.data());
+    }
+
+    // Live listener
+    fb.onSnapshot(dref, (snap) => {
+      if (snap.exists()) {
+        applyCloudData(snap.data());
+        onCloudUpdate();
+      }
+    }, (err) => {
+      console.error("Firestore listener error:", err);
+      setCloudStatus("offline", "Sync error");
+    });
+
+    dbReady = true;
+    setCloudStatus("online", "Online ✓");
+    toast("✅ Successfully connected to cloud", "success");
+    return true;
+
+  } catch (err) {
+    console.error("Cloud connection failed:", err);
+    setCloudStatus("offline", "Failed to connect");
+    toast("❌ Cloud connection failed. Check Firebase console.", "error");
+    return false;
+  }
 }
 
 function refreshCurrentView(){
