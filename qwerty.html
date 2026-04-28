@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>ICT Gamified Learning Hub</title>
 <style>
-@import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap)');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -681,9 +681,9 @@ EXPLAIN: Keyboard is used to input data into the computer."></textarea>
 </footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_svhJTeVR6ThyAUfIghr8yqwW2ABRNXw",
@@ -738,6 +738,9 @@ return `<span class="badge grade-${g.letter}" style="font-size:.8rem;padding:4px
 }
 
 let teachers={}, students={}, quizzes={}, leaderboard=[], resetTokens={}, minigameScores={dragdrop:[],cardgame:[]};
+let dbReady = false;
+let isApplyingCloudData = false;
+const CLOUD_DOC_PATH = ["app_data", "main"];
 
 function showScreen(id){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -760,45 +763,143 @@ cloudIndicator.className="cloud-indicator "+state;
 cloudDot.className="cloud-dot"+(state==="syncing"?" pulse":"");
 cloudStatus.textContent=state==="online"?"Live Sync":state==="syncing"?"Syncing...":"Offline";
 }
+function setCloudStatus(state, text) {
+  cloudIndicator.className = "cloud-indicator " + state;
+  cloudDot.className = "cloud-dot" + (state === "syncing" ? " pulse" : "");
+  cloudStatus.textContent = text || (
+    state === "online" ? "Live Sync" :
+    state === "syncing" ? "Syncing..." :
+    "Offline"
+  );
+}
 
-let saveTimeout=null;
-function saveAll(){
-clearTimeout(saveTimeout);
-setCloudState("syncing");
-saveTimeout=setTimeout(()=>{
-const data={teachers,students,quizzes,leaderboard,resetTokens,minigameScores};
-set(ref(db,"lmsData"),data).then(()=>setCloudState("online")).catch(e=>{console.error(e);setCloudState("offline");});
-},600);
+function normalizeCloudData(data = {}) {
+  return {
+    teachers: data.teachers || {},
+    students: data.students || {},
+    quizzes: data.quizzes || {},
+    leaderboard: Array.isArray(data.leaderboard) ? data.leaderboard : [],
+    resetTokens: data.resetTokens || {},
+    minigameScores: {
+      dragdrop: data.minigameScores?.dragdrop || [],
+      cardgame: data.minigameScores?.cardgame || []
+    }
+  };
+}
+
+function applyCloudData(data) {
+  isApplyingCloudData = true;
+
+  const clean = normalizeCloudData(data);
+
+  teachers = clean.teachers;
+  students = clean.students;
+  quizzes = clean.quizzes;
+  leaderboard = clean.leaderboard;
+  resetTokens = clean.resetTokens;
+  minigameScores = clean.minigameScores;
+
+  isApplyingCloudData = false;
+}
+
+function onCloudUpdate() {
+  refreshCurrentView();
+}
+let saveTimeout = null;
+
+function saveAll() {
+  if (isApplyingCloudData) return;
+
+  clearTimeout(saveTimeout);
+  setCloudStatus("syncing", "Saving...");
+
+  saveTimeout = setTimeout(async () => {
+    try {
+      if (!dbReady) {
+        console.warn("Cloud database is not ready yet. Save skipped.");
+        setCloudStatus("offline", "Cloud not ready");
+        return;
+      }
+
+      const data = {
+        teachers,
+        students,
+        quizzes,
+        leaderboard,
+        resetTokens,
+        minigameScores
+      };
+
+      const dref = doc(db, CLOUD_DOC_PATH[0], CLOUD_DOC_PATH[1]);
+      await setDoc(dref, data, { merge: true });
+
+      setCloudStatus("online", "Live Sync");
+    } catch (e) {
+      console.error("Save failed:", e);
+      setCloudStatus("offline", "Save failed");
+      toast("❌ Cloud save failed. Check Firebase rules.", "error");
+    }
+  }, 600);
 }
 
 async function initCloud() {
   setCloudStatus("syncing", "Connecting to Firebase...");
 
   try {
-    const fb = await waitForFirebase();
+    const userCredential = await signInAnonymously(auth);
+    console.log("✅ Anonymous auth successful:", userCredential.user.uid);
 
-    // Sign in anonymously
-    const userCredential = await fb.signInAnonymously(fb.auth);
-    console.log("✅ Anonymous auth successful", userCredential.user.uid);
-
-    const dref = fb.doc(fb.db, 'app_data', 'main');
-    const snap = await fb.getDoc(dref);
+    const dref = doc(db, CLOUD_DOC_PATH[0], CLOUD_DOC_PATH[1]);
+    const snap = await getDoc(dref);
 
     if (!snap.exists()) {
       const initialData = {
         teachers: {},
         students: {},
+        quizzes: {},
         leaderboard: [],
         resetTokens: {},
-        minigameScores: { dragdrop: [], cardgame: [], twentyquestions: [] },
-        quizzes: {}   // you can add your sample quiz here if needed
+        minigameScores: {
+          dragdrop: [],
+          cardgame: []
+        }
       };
-      await fb.setDoc(dref, initialData);
+
+      await setDoc(dref, initialData);
       applyCloudData(initialData);
       toast("📊 Initial cloud data created", "success");
     } else {
       applyCloudData(snap.data());
     }
+
+    onSnapshot(
+      dref,
+      snapshot => {
+        if (snapshot.exists()) {
+          applyCloudData(snapshot.data());
+          onCloudUpdate();
+          setCloudStatus("online", "Live Sync");
+        }
+      },
+      err => {
+        console.error("Firestore listener error:", err);
+        setCloudStatus("offline", "Sync error");
+        toast("❌ Cloud listener error. Check Firestore rules.", "error");
+      }
+    );
+
+    dbReady = true;
+    setCloudStatus("online", "Live Sync");
+    toast("✅ Successfully connected to cloud", "success");
+    return true;
+
+  } catch (err) {
+    console.error("Cloud connection failed:", err);
+    setCloudStatus("offline", "Failed to connect");
+    toast("❌ Cloud connection failed. Check Firebase Auth and Firestore rules.", "error");
+    return false;
+  }
+}
 
     // Live listener
     fb.onSnapshot(dref, (snap) => {
@@ -935,9 +1036,8 @@ iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser
 };
 }
 
-$("playDragDropBtn").onclick=()=>launchMinigame("dragdrop","🧩 Drag & Drop","[bryceabi-alt.github.io](https://bryceabi-alt.github.io/minigames/draganddrop.html)");
-$("playCardGameBtn").onclick=()=>launchMinigame("cardgame","🂡 Card Game","[bryceabi-alt.github.io](https://bryceabi-alt.github.io/minigames/cardgame.html)");
-
+$("playDragDropBtn").onclick=()=>launchMinigame("dragdrop","🧩 Drag & Drop","https://bryceabi-alt.github.io/minigames/draganddrop.html");
+$("playCardGameBtn").onclick=()=>launchMinigame("cardgame","🂡 Card Game","https://bryceabi-alt.github.io/minigames/cardgame.html");
 $("exitGameBtn").onclick=()=>{
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
