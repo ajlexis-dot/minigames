@@ -5,77 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>ICT Gamified Learning Hub</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap)');
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
 --radius:clamp(14px,2vw,20px);
-@@ -18,41 +17,19 @@
+--pad:clamp(16px,4vw,32px);
+--btn-pad:clamp(14px,3vw,18px) clamp(20px,4vw,32px);
+--btn-font:clamp(1rem,3vw,1.15rem);
+--text:clamp(1rem,3vw,1.1rem);
+--question:clamp(1.2rem,4vw,1.5rem);
 --title:clamp(2.2rem,7vw,4.5rem);
 }
 *{scroll-behavior:smooth;user-select:none;}
-body{
-font-family:'Poppins',sans-serif;
-background:linear-gradient(180deg,#f8fafc,#e0f2fe);
-color:#1e293b;
-min-height:100vh;
-overflow-x:hidden;
-}
-
 body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#f8fafc,#e0f2fe);color:#1e293b;min-height:100vh;overflow-x:hidden;}
 .gadget-background{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 .gadget{position:absolute;font-size:clamp(2rem,6vw,3.6rem);opacity:.18;animation:float 24s linear infinite;}
 @keyframes float{from{transform:translateX(-30vw) rotate(0deg)}to{transform:translateX(130vw) rotate(360deg)}}
-
 .screen{display:none;position:relative;z-index:1;}
 .screen.active{display:block;}
-
-button{
-width:100%;max-width:360px;padding:var(--btn-pad);font-size:var(--btn-font);
-background:#3b82f6;color:#fff;border:none;border-radius:var(--radius);cursor:pointer;
-margin:10px 0;box-shadow:0 6px 0 #1e40af;transition:transform .1s ease,box-shadow .1s ease;
-font-family:'Poppins',sans-serif;font-weight:600;
-}
 button{width:100%;max-width:360px;padding:var(--btn-pad);font-size:var(--btn-font);background:#3b82f6;color:#fff;border:none;border-radius:var(--radius);cursor:pointer;margin:10px 0;box-shadow:0 6px 0 #1e40af;transition:transform .1s ease,box-shadow .1s ease;font-family:'Poppins',sans-serif;font-weight:600;}
 button:hover:not(:disabled){transform:translateY(-1px);}
 button:active{transform:translateY(2px);box-shadow:0 4px 0 #1e40af;}
 button:disabled{opacity:.5;cursor:not-allowed;}
-
-.auth-box{
-width:100%;max-width:500px;margin:20px auto;background:#fff;
-padding:var(--pad);border-radius:var(--radius);
-box-shadow:0 20px 40px rgba(0,0,0,.1);text-align:center;
-}
 .auth-box{width:100%;max-width:500px;margin:20px auto;background:#fff;padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);text-align:center;}
 .auth-box h2{color:#1d4ed8;font-size:clamp(1.6rem,5vw,2.4rem);margin-top:0;}
-.auth-box input{
-width:100%;max-width:360px;padding:var(--btn-pad);font-size:var(--btn-font);
-border:2px solid #3b82f6;border-radius:var(--radius);margin:8px 0;font-family:'Poppins',sans-serif;
-}
 .auth-box input{width:100%;max-width:360px;padding:var(--btn-pad);font-size:var(--btn-font);border:2px solid #3b82f6;border-radius:var(--radius);margin:8px 0;font-family:'Poppins',sans-serif;}
 .auth-toggle{background:#64748b!important;box-shadow:0 6px 0 #334155!important;}
 .back-btn{background:#64748b!important;box-shadow:0 6px 0 #334155!important;}
 .link-btn{background:transparent!important;color:#2563eb!important;box-shadow:none!important;text-decoration:underline;font-size:.95rem!important;padding:6px!important;}
-@@ -68,28 +45,17 @@
+.link-btn:hover{color:#1d4ed8!important;}
+.remember-row{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0;font-size:.95rem;}
+.remember-row input[type="checkbox"]{width:18px;height:18px;accent-color:#3b82f6;}
+.error-msg{color:#dc2626;font-size:.9rem;margin:6px 0;min-height:20px;}
+.success-btn{background:#16a34a!important;box-shadow:0 6px 0 #166534!important;}
+.admin-btn{background:#7c3aed!important;box-shadow:0 6px 0 #5b21b6!important;}
 .warn-btn{background:#f59e0b!important;box-shadow:0 6px 0 #b45309!important;}
 .delete-btn{background:#dc2626!important;box-shadow:0 6px 0 #991b1b!important;}
 .small-btn{max-width:200px;padding:10px 14px!important;font-size:.95rem!important;}
-
-.top-nav{
-position:fixed;top:10px;right:10px;z-index:100;display:flex;align-items:center;gap:6px;
-background:rgba(255,255,255,.95);backdrop-filter:blur(8px);padding:6px 10px;
-border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.1);
-}
 .top-nav{position:fixed;top:10px;right:10px;z-index:100;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);padding:6px 10px;border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.1);}
 .top-nav button{max-width:150px;padding:8px 14px!important;font-size:.9rem!important;margin:0!important;}
 .user-badge{font-size:.85rem;color:#1d4ed8;font-weight:600;padding:0 8px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .user-badge.admin-badge{color:#7c3aed;}
-
-.cloud-indicator{
-position:fixed;bottom:10px;left:10px;z-index:100;background:rgba(255,255,255,.95);
-padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600;
-box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;align-items:center;gap:6px;
-}
 .cloud-indicator{position:fixed;bottom:10px;left:10px;z-index:100;background:rgba(255,255,255,.95);padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;align-items:center;gap:6px;}
 .cloud-indicator.online{color:#16a34a;}
 .cloud-indicator.offline{color:#dc2626;}
@@ -83,65 +54,34 @@ box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;align-items:center;gap:6px;
 .cloud-dot{width:8px;height:8px;border-radius:50%;background:currentColor;}
 .cloud-dot.pulse{animation:livePulse 1.5s infinite;}
 @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
-
 .toast-container{position:fixed;top:80px;right:20px;z-index:200;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
 .toast{background:#1e293b;color:#fff;padding:12px 20px;border-radius:12px;font-size:.95rem;font-weight:600;box-shadow:0 8px 20px rgba(0,0,0,.2);animation:toastIn .3s ease;max-width:320px;pointer-events:auto;}
 .toast.success{background:#16a34a;}
-@@ -99,59 +65,31 @@
+.toast.error{background:#dc2626;}
+.toast.info{background:#2563eb;}
+.toast.admin{background:#7c3aed;}
 @keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 .toast.fade-out{animation:toastOut .3s ease forwards;}
 @keyframes toastOut{to{transform:translateX(100%);opacity:0}}
-
 .loading-overlay{position:fixed;inset:0;background:rgba(248,250,252,.95);z-index:300;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:20px;}
 .spinner{width:60px;height:60px;border:6px solid #dbeafe;border-top-color:#1d4ed8;border-radius:50%;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-.hub-header{
-min-height:40vh;padding:var(--pad);display:flex;flex-direction:column;
-justify-content:center;align-items:center;text-align:center;
-}
 .hub-header{min-height:40vh;padding:var(--pad);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 .hub-header h1{font-size:var(--title);color:#1d4ed8;margin-bottom:10px;}
 .hub-header p{font-size:var(--text);margin-bottom:24px;max-width:480px;}
-
-.games-grid{
-width:100%;max-width:1100px;margin:0 auto;
-display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;padding:0 clamp(8px,4vw,16px) 40px;
-}
-.game-card{
-background:white;padding:24px 20px;border-radius:20px;text-align:center;
-box-shadow:0 16px 32px rgba(0,0,0,.1);transition:transform .3s ease;max-width:420px;margin-inline:auto;width:100%;
-}
 .games-grid{width:100%;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:0 clamp(8px,4vw,16px) 40px;}
 .game-card{background:white;padding:24px 20px;border-radius:20px;text-align:center;box-shadow:0 16px 32px rgba(0,0,0,.1);transition:transform .3s ease;max-width:420px;margin-inline:auto;width:100%;}
 .game-card:hover{transform:translateY(-6px);}
 .game-icon{font-size:3.2rem;margin-bottom:10px;}
 .game-card h2{color:#1d4ed8;margin-bottom:8px;font-size:1.25rem;}
 .game-card p{font-size:.95rem;margin-bottom:18px;}
-.play-btn{
-display:inline-flex;align-items:center;justify-content:center;
-width:150px;height:42px;font-size:.95rem;background:#3b82f6;color:white;
-text-decoration:none;border-radius:12px;box-shadow:0 6px 0 #1e40af;cursor:pointer;border:none;
-font-family:'Poppins',sans-serif;font-weight:600;
-}
 .play-btn{display:inline-flex;align-items:center;justify-content:center;width:150px;height:42px;font-size:.95rem;background:#3b82f6;color:white;text-decoration:none;border-radius:12px;box-shadow:0 6px 0 #1e40af;cursor:pointer;border:none;font-family:'Poppins',sans-serif;font-weight:600;}
 .play-btn:active{transform:translateY(2px);box-shadow:0 4px 0 #1e40af;}
 .play-btn.locked{background:#94a3b8;box-shadow:0 6px 0 #64748b;cursor:not-allowed;}
 .game-card-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
 .game-card-actions button{width:auto;max-width:none;padding:8px 14px!important;font-size:.85rem!important;margin:0!important;}
-
-.lms-panel{
-width:100%;max-width:1100px;margin:20px auto;background:#fff;
-padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);
-}
 .lms-panel{width:100%;max-width:1100px;margin:20px auto;background:#fff;padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);}
 .lms-panel h2{color:#1d4ed8;text-align:center;margin-top:0;}
-
-.quiz-card-lms{
-background:#f8fafc;border:2px solid #e2e8f0;padding:16px;border-radius:var(--radius);
-margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
-}
 .quiz-card-lms{background:#f8fafc;border:2px solid #e2e8f0;padding:16px;border-radius:var(--radius);margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;}
 .quiz-card-lms:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.08);border-color:#3b82f6;}
 .quiz-card-lms h3{margin:0 0 6px 0;color:#1d4ed8;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -149,93 +89,81 @@ margin:12px 0;text-align:left;transition:transform .15s ease,box-shadow .15s eas
 .quiz-card-lms .link-box{background:#dbeafe;padding:8px 12px;border-radius:8px;word-break:break-all;font-family:monospace;font-size:.85rem;margin:8px 0;}
 .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 .card-actions button{flex:1 1 120px;max-width:180px;margin:0;padding:10px!important;font-size:.9rem!important;}
-
 .badge{display:inline-block;font-size:.75rem;padding:3px 8px;border-radius:999px;font-weight:600;}
 .badge-public{background:#dcfce7;color:#166534;}
 .badge-code{background:#fef9c3;color:#854d0e;}
-@@ -163,15 +101,12 @@
+.badge-new{background:#dbeafe;color:#1d4ed8;animation:pulse 2s infinite;}
+.grade-badge{display:inline-block;padding:6px 16px;border-radius:12px;font-weight:700;font-size:1.1rem;}
+.grade-A{background:#bbf7d0;color:#166534;border:2px solid #16a34a;}
+.grade-B{background:#dbeafe;color:#1e40af;border:2px solid #3b82f6;}
+.grade-C{background:#fef9c3;color:#854d0e;border:2px solid #eab308;}
 .grade-D{background:#fed7aa;color:#9a3412;border:2px solid #ea580c;}
 .grade-F{background:#fecaca;color:#991b1b;border:2px solid #dc2626;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-
 .q-editor{background:#f8fafc;padding:16px;border-radius:var(--radius);margin:12px 0;border:2px solid #e2e8f0;}
 .q-editor input,.q-editor select,.q-editor textarea{width:100%;padding:10px;font-size:1rem;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0;font-family:'Poppins',sans-serif;}
 .q-editor label{font-weight:600;font-size:.9rem;color:#475569;display:block;margin-top:8px;}
-
 .quiz-meta-box{background:#eff6ff;padding:16px;border-radius:var(--radius);border:2px solid #3b82f6;margin:12px 0;}
 .quiz-meta-box input,.quiz-meta-box textarea{width:100%;padding:10px;font-size:1rem;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0;font-family:'Poppins',sans-serif;}
 .quiz-meta-box label{font-weight:600;color:#1d4ed8;display:block;margin-top:8px;}
-
 .leaderboard-section{margin-top:20px;}
 .leaderboard-section h2{color:#1d4ed8;text-align:center;}
 .leaderboard-section table{width:100%;border-collapse:collapse;margin-top:14px;font-size:var(--text);}
-@@ -180,11 +115,9 @@
+.leaderboard-section th,.leaderboard-section td{border:1px solid #e2e8f0;padding:10px;text-align:center;}
+.leaderboard-section th{background:#dbeafe;color:#1d4ed8;}
 .leaderboard-section tr:nth-child(1) td{background:#fef3c7;font-weight:700;}
 .leaderboard-section tr:nth-child(2) td{background:#f1f5f9;font-weight:600;}
 .leaderboard-section tr:nth-child(3) td{background:#fde68a;}
-
 .lb-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:14px 0;}
 .lb-tabs button{flex:1 1 120px;max-width:180px;padding:10px!important;font-size:.95rem!important;background:#cbd5e1!important;color:#1e293b!important;box-shadow:0 4px 0 #94a3b8!important;}
 .lb-tabs button.active{background:#3b82f6!important;color:#fff!important;box-shadow:0 4px 0 #1e40af!important;}
-
 .admin-header{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:20px;border-radius:var(--radius);margin-bottom:20px;text-align:center;position:relative;}
 .admin-header h2{color:#fff!important;margin:0;}
 .admin-header p{color:#e9d5ff;margin:6px 0 0;}
-@@ -211,10 +144,8 @@
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:20px 0;}
+.stat-card{background:linear-gradient(135deg,#dbeafe,#eff6ff);padding:18px 14px;border-radius:var(--radius);text-align:center;border:2px solid #3b82f6;}
+.stat-card .num{font-size:clamp(1.8rem,5vw,2.4rem);font-weight:700;color:#1d4ed8;}
+.stat-card .label{font-size:.85rem;color:#475569;margin-top:4px;}
+.admin-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:16px 0;}
+.admin-tabs button{flex:1 1 100px;max-width:140px;padding:10px!important;font-size:.9rem!important;background:#e2e8f0!important;color:#475569!important;box-shadow:0 4px 0 #cbd5e1!important;}
+.admin-tabs button.active{background:#7c3aed!important;color:#fff!important;box-shadow:0 4px 0 #5b21b6!important;}
+.admin-section{display:none;margin-top:16px;}
+.admin-section.active{display:block;}
+.admin-table{width:100%;border-collapse:collapse;font-size:.9rem;}
+.admin-table th,.admin-table td{border:1px solid #e2e8f0;padding:10px;text-align:left;vertical-align:middle;}
+.admin-table th{background:#f1f5f9;color:#1d4ed8;font-size:.85rem;}
+.admin-table td{background:#fff;}
+.admin-table tr:hover td{background:#f8fafc;}
+.action-cell{white-space:nowrap;}
+.action-cell button{display:inline-block;width:auto;max-width:none;padding:6px 10px!important;font-size:.8rem!important;margin:2px!important;}
+.search-box{margin:12px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.search-box input{flex:1;min-width:200px;padding:10px;border:2px solid #3b82f6;border-radius:var(--radius);font-family:'Poppins',sans-serif;}
 .empty-state{text-align:center;padding:40px 20px;color:#94a3b8;}
 .empty-state .icon{font-size:3rem;}
 .empty-state h3{color:#64748b;margin:10px 0;}
-
 .controls{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .controls button{flex:0 0 240px;}
-
 .email-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;display:none;justify-content:center;align-items:center;padding:20px;}
 .email-modal.active{display:flex;}
 .email-content{background:#fff;border-radius:var(--radius);padding:var(--pad);max-width:500px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,.3);animation:slideIn .3s ease;}
-@@ -224,41 +155,23 @@
+@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.email-header{background:#1d4ed8;color:#fff;padding:14px;border-radius:12px;margin-bottom:14px;}
+.email-header h3{margin:0;font-size:1.1rem;}
 .email-header p{margin:4px 0 0;font-size:.9rem;color:#475569;}
 .email-body p{margin:10px 0;font-size:.95rem;}
 .reset-token-display{background:#1e293b;color:#fbbf24;padding:16px;border-radius:8px;font-family:monospace;font-size:1.4rem;letter-spacing:4px;text-align:center;font-weight:700;margin:14px 0;word-break:break-all;}
-
 .code-fallback{margin:18px auto 6px;max-width:500px;background:#fffbeb;border:2px dashed #f59e0b;padding:14px;border-radius:var(--radius);text-align:center;}
 .code-fallback input{width:100%;max-width:280px;padding:10px;font-size:1rem;border:2px solid #f59e0b;border-radius:10px;margin:8px 0;letter-spacing:3px;text-transform:uppercase;text-align:center;font-family:'Poppins',sans-serif;}
 .code-fallback button{background:#f59e0b!important;box-shadow:0 4px 0 #b45309!important;max-width:280px;}
-
-.game-frame-container{
-position:fixed;inset:0;z-index:50;background:#f8fafc;display:none;
-flex-direction:column;
-}
 .game-frame-container{position:fixed;inset:0;z-index:50;background:#f8fafc;display:none;flex-direction:column;}
 .game-frame-container.active{display:flex;}
-.game-frame-topbar{
-display:flex;align-items:center;justify-content:space-between;
-padding:8px 16px;background:#fff;border-bottom:2px solid #dbeafe;
-box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:51;gap:8px;flex-wrap:wrap;
-}
 .game-frame-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fff;border-bottom:2px solid #dbeafe;box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:51;gap:8px;flex-wrap:wrap;}
 .game-frame-topbar h3{color:#1d4ed8;font-size:1rem;margin:0;flex:1;min-width:120px;}
-.game-frame-topbar button{
-max-width:160px;padding:6px 14px!important;font-size:.85rem!important;margin:0!important;
-}
 .game-frame-topbar button{max-width:160px;padding:6px 14px!important;font-size:.85rem!important;margin:0!important;}
 .game-frame-topbar .exit-game-btn{background:#dc2626!important;box-shadow:0 4px 0 #991b1b!important;}
-.auto-save-badge{
-background:#dcfce7;color:#166534;padding:6px 14px;border-radius:20px;
-font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;
-border:2px solid #16a34a;white-space:nowrap;
-}
-@media(max-width:600px){
-.auto-save-badge{font-size:.7rem;padding:4px 8px;}
-.game-frame-topbar h3{font-size:.9rem;min-width:100px;}
-}
 .auto-save-badge{background:#dcfce7;color:#166534;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;border:2px solid #16a34a;white-space:nowrap;}
 @media(max-width:600px){.auto-save-badge{font-size:.7rem;padding:4px 8px;}.game-frame-topbar h3{font-size:.9rem;min-width:100px;}}
 .game-iframe{flex:1;border:none;width:100%;}
-
-.quiz-game-box{
-width:100%;max-width:1000px;margin:20px auto;background:#fff;
-padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,.1);
-}
 .manual-save-box{background:#fef3c7;border:2px solid #f59e0b;padding:12px;margin:8px;border-radius:12px;display:none;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;}
 .manual-save-box.active{display:flex;}
 .manual-save-box input{padding:8px 12px;border:2px solid #f59e0b;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;width:100px;}
@@ -244,17 +172,497 @@ padding:var(--pad);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0
 .counter{font-weight:600;margin-bottom:8px;font-size:var(--text);color:#2563eb;text-align:center;}
 #iqAttempts{font-size:clamp(.9rem,3vw,1.05rem);color:#475569;text-align:center;margin-bottom:16px;}
 .question{font-size:var(--question);margin-bottom:22px;text-align:center;}
-@@ -270,9 +183,7 @@
+.options{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+.options button{background:#e0f2fe;color:#1e293b;box-shadow:0 4px 0 #7dd3fc;}
+.options button:hover{background:#bae6fd;}
+.correct-glow{background:#bbf7d0!important;box-shadow:0 0 0 4px #22c55e!important;}
+.wrong-glow{background:#fecaca!important;box-shadow:0 0 0 4px #ef4444!important;}
+.feedback{font-size:1.1rem;font-weight:700;text-align:center;min-height:28px;}
 .explanation{margin-top:10px;font-style:italic;font-size:var(--text);text-align:center;}
 .result{text-align:center;}
 .result h2{font-size:clamp(2rem,6vw,3.2rem);color:#1d4ed8;}
-
 footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color:#475569;position:relative;z-index:1;}
-
 @media(max-width:500px){
 .top-nav{top:5px;right:5px;padding:4px 8px;}
 .user-badge{max-width:100px;font-size:.75rem;}
-@@ -733,6 +644,13 @@
+}
+
+/* NEW: Bulk Question Editor Styles */
+.bulk-editor-box{background:#f0fdf4;border:2px solid #16a34a;padding:20px;border-radius:var(--radius);margin:16px 0;}
+.bulk-editor-box h3{color:#166534;margin:0 0 8px 0;display:flex;align-items:center;gap:8px;}
+.bulk-editor-box p{font-size:.9rem;color:#475569;margin-bottom:12px;}
+.bulk-editor-box textarea{width:100%;min-height:300px;padding:14px;font-family:'Courier New',monospace;font-size:.9rem;border:2px solid #22c55e;border-radius:10px;resize:vertical;line-height:1.6;}
+.bulk-editor-box .format-hint{background:#dcfce7;padding:12px;border-radius:8px;margin:12px 0;font-size:.85rem;color:#166534;}
+.bulk-editor-box .format-hint code{background:#bbf7d0;padding:2px 6px;border-radius:4px;font-family:'Courier New',monospace;}
+.bulk-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.bulk-actions button{flex:1 1 180px;max-width:220px;}
+.mode-toggle{display:flex;gap:8px;margin:16px 0;justify-content:center;flex-wrap:wrap;}
+.mode-toggle button{flex:0 0 auto;max-width:200px;padding:10px 20px!important;font-size:.95rem!important;}
+.mode-toggle button.active{background:#16a34a!important;box-shadow:0 4px 0 #166534!important;}
+.question-count-badge{background:#3b82f6;color:#fff;padding:8px 16px;border-radius:20px;font-size:.95rem;font-weight:600;display:inline-block;margin:10px 0;}
+</style>
+</head>
+<body>
+
+<div class="gadget-background" id="gadgetBg"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+<div class="spinner"></div>
+<p style="font-weight:600;color:#1d4ed8;">Connecting to Cloud...</p>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<nav class="top-nav" id="topNav" style="display:none;">
+<span class="user-badge" id="userBadge"></span>
+<button id="homeBtn">🏠 Home</button>
+<button id="logoutBtn" class="back-btn">🚪 Logout</button>
+</nav>
+
+<div class="cloud-indicator offline" id="cloudIndicator">
+<span class="cloud-dot"></span>
+<span id="cloudStatus">Offline</span>
+</div>
+
+<!-- ROLE SELECTION -->
+<section class="screen active" id="roleScreen">
+<div class="hub-header">
+<h1>🎓 ICT Learning Hub</h1>
+<p>Welcome! Select your role to continue.</p>
+<button id="studentRoleBtn">👨‍🎓 I'm a Student</button>
+<button id="teacherRoleBtn" class="auth-toggle">👩‍🏫 I'm a Teacher</button>
+<button id="adminRoleBtn" class="admin-btn">🛡️ Administrator</button>
+</div>
+</section>
+
+<!-- STUDENT AUTH -->
+<section class="screen" id="studentAuthScreen">
+<div class="hub-header">
+<div class="auth-box">
+<h2>👨‍🎓 Student Login</h2>
+<p>Enter your name to start learning!</p>
+<input type="text" id="studentName" placeholder="Your Name" maxlength="30">
+<div class="remember-row">
+<input type="checkbox" id="rememberMeStudent">
+<label for="rememberMeStudent">Remember me on this device</label>
+</div>
+<p class="error-msg" id="studentError"></p>
+<button id="studentSubmit" class="success-btn">🚀 Enter Hub</button>
+<button id="studentBack" class="back-btn">← Back</button>
+</div>
+</div>
+</section>
+
+<!-- STUDENT HUB -->
+<section class="screen" id="studentHubScreen">
+<div class="hub-header" style="min-height:28vh;">
+<h1>🎮 Learning Hub</h1>
+<p id="studentWelcome">Choose a game or quiz to play!</p>
+</div>
+<div class="games-grid" id="gamesGrid">
+<div class="game-card">
+<div class="game-icon">🧩</div>
+<h2>Drag & Drop</h2>
+<p>Match components to their correct categories!</p>
+<button class="play-btn" id="playDragDropBtn">▶ Play</button>
+<div class="game-card-actions">
+<button class="small-btn" onclick="showMinigameLeaderboard('dragdrop')">🏆 Leaderboard</button>
+</div>
+</div>
+<div class="game-card">
+<div class="game-icon">🂡</div>
+<h2>Card Game</h2>
+<p>Memory match and learn ICT terms!</p>
+<button class="play-btn" id="playCardGameBtn">▶ Play</button>
+<div class="game-card-actions">
+<button class="small-btn" onclick="showMinigameLeaderboard('cardgame')">🏆 Leaderboard</button>
+</div>
+</div>
+<div class="game-card">
+<div class="game-icon">📝</div>
+<h2>Quizzes</h2>
+<p>Test your ICT knowledge with teacher-made quizzes!</p>
+<button class="play-btn" id="browseQuizzesBtn">📚 Browse</button>
+</div>
+</div>
+</section>
+
+<!-- MINIGAME LEADERBOARD -->
+<section class="screen" id="minigameLbScreen">
+<div class="lms-panel">
+<h2 id="minigameLbTitle">🏆 Leaderboard</h2>
+<p style="text-align:center;color:#64748b;" id="minigameLbDesc"></p>
+<div class="leaderboard-section">
+<table><thead><tr><th>#</th><th>Name</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead><tbody id="minigameLbBody"></tbody></table>
+</div>
+<div class="controls"><button id="minigameLbBack" class="back-btn">← Back</button></div>
+</div>
+</section>
+
+<!-- STUDENT QUIZ BROWSER -->
+<section class="screen" id="studentQuizBrowser">
+<div class="lms-panel">
+<h2>📚 Available Quizzes</h2>
+<div class="search-box">
+<input type="text" id="studentQuizSearch" placeholder="🔍 Search quizzes...">
+</div>
+<div class="code-fallback">
+<p><strong>Have a quiz code?</strong></p>
+<input type="text" id="accessCodeInput" placeholder="ENTER CODE" maxlength="8">
+<p class="error-msg" id="accessCodeError"></p>
+<button id="joinByCodeBtn">🔑 Join Quiz</button>
+</div>
+<div id="publicQuizzesList"></div>
+<div class="controls"><button id="quizBrowserBack" class="back-btn">← Back to Hub</button></div>
+</div>
+</section>
+
+<!-- TEACHER AUTH -->
+<section class="screen" id="teacherAuthScreen">
+<div class="hub-header">
+<div class="auth-box" id="teacherLoginBox">
+<h2>👩‍🏫 Teacher Login</h2>
+<input type="email" id="teacherEmail" placeholder="Email (Gmail)">
+<input type="password" id="teacherPassword" placeholder="Password">
+<div class="remember-row">
+<input type="checkbox" id="rememberMeTeacher">
+<label for="rememberMeTeacher">Remember me</label>
+</div>
+<p class="error-msg" id="teacherError"></p>
+<button id="teacherLoginBtn" class="success-btn">🔐 Login</button>
+<button id="showRegisterBtn" class="link-btn">Don't have an account? Register</button>
+<button id="forgotPassBtn" class="link-btn">Forgot password?</button>
+<button id="teacherBackBtn" class="back-btn">← Back</button>
+</div>
+<div class="auth-box" id="teacherRegisterBox" style="display:none;">
+<h2>📝 Teacher Registration</h2>
+<input type="text" id="regName" placeholder="Display Name">
+<input type="email" id="regEmail" placeholder="Email (Gmail only)">
+<input type="password" id="regPassword" placeholder="Password (min 6)">
+<input type="password" id="regConfirm" placeholder="Confirm Password">
+<p class="error-msg" id="registerError"></p>
+<button id="registerSubmitBtn" class="success-btn">✨ Create Account</button>
+<button id="showLoginBtn" class="link-btn">Already have an account? Login</button>
+</div>
+<div class="auth-box" id="forgotPassBox" style="display:none;">
+<h2>🔑 Reset Password</h2>
+<p>Enter your email to receive a reset code.</p>
+<input type="email" id="resetEmail" placeholder="Your Gmail">
+<p class="error-msg" id="resetError"></p>
+<button id="sendResetBtn" class="warn-btn">📧 Send Reset Code</button>
+<button id="cancelResetBtn" class="link-btn">← Back to Login</button>
+</div>
+<div class="auth-box" id="enterCodeBox" style="display:none;">
+<h2>🔐 Enter Reset Code</h2>
+<p>Check the simulated email popup for your code.</p>
+<input type="text" id="resetCodeInput" placeholder="6-DIGIT CODE" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:1.4rem;">
+<input type="password" id="newPassword" placeholder="New Password (min 6)">
+<p class="error-msg" id="codeError"></p>
+<button id="verifyCodeBtn" class="success-btn">✅ Reset Password</button>
+<button id="backToForgotBtn" class="link-btn">← Back</button>
+</div>
+</div>
+</section>
+
+<!-- ADMIN AUTH -->
+<section class="screen" id="adminAuthScreen">
+<div class="hub-header">
+<div class="auth-box">
+<h2>🛡️ Admin Login</h2>
+<input type="password" id="adminPassword" placeholder="Admin Password">
+<p class="error-msg" id="adminError"></p>
+<button id="adminLoginBtn" class="admin-btn">🔐 Access Dashboard</button>
+<button id="adminBackBtn" class="back-btn">← Back</button>
+</div>
+</div>
+</section>
+
+<!-- DIFFICULTY / QUIZ START -->
+<section class="screen" id="difficultyScreen">
+<div class="quiz-game-box">
+<h2 id="quizTitleHeader" style="text-align:center;color:#1d4ed8;"></h2>
+<p id="welcomeMsg" style="text-align:center;"></p>
+<div id="resumeSlot"></div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0;">
+<button data-level="easy" class="success-btn" style="max-width:180px;">🟢 Easy</button>
+<button data-level="medium" class="warn-btn" style="max-width:180px;">🟡 Medium</button>
+<button data-level="hard" class="delete-btn" style="max-width:180px;">🔴 Hard</button>
+<button data-level="all" style="max-width:180px;">🎲 All Levels</button>
+</div>
+<div class="leaderboard-section">
+<h2>🏆 Leaderboard<span id="leaderboardQuizName"></span></h2>
+<table><thead><tr><th>#</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead><tbody id="leaderboardBody"></tbody></table>
+</div>
+<div class="controls"><button id="difficultyBack" class="back-btn">← Back</button></div>
+</div>
+</section>
+
+<!-- QUIZ GAME -->
+<section class="screen" id="quizGameScreen">
+<div class="quiz-game-box">
+<p class="counter" id="iqCounter"></p>
+<p id="iqAttempts"></p>
+<p class="question" id="iqQuestion"></p>
+<div class="options" id="iqOptions"></div>
+<p class="feedback" id="iqFeedback"></p>
+<p class="explanation" id="iqExplanation"></p>
+<div class="controls">
+<button id="iqBackBtn" class="back-btn">← Exit Quiz</button>
+</div>
+</div>
+</section>
+
+<!-- QUIZ RESULT -->
+<section class="screen" id="quizResultScreen">
+<div class="quiz-game-box result">
+<h2>🎉 Quiz Complete!</h2>
+<p style="font-size:1.4rem;">Your Score: <strong id="iqScore"></strong></p>
+<div id="iqGradeDisplay" style="margin:16px 0;"></div>
+<p id="iqFinalAttempts" style="color:#64748b;"></p>
+<div class="leaderboard-section" style="margin-top:24px;">
+<h2>🏆 Leaderboard</h2>
+<table><thead><tr><th>#</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead><tbody id="resultLeaderboardBody"></tbody></table>
+</div>
+<div class="controls">
+<button id="iqRestartBtn" class="success-btn">🔄 Retry (Same Level)</button>
+<button id="iqRestartAllBtn">🎲 New Level</button>
+<button id="iqResultHomeBtn" class="back-btn">🏠 Home</button>
+</div>
+</div>
+</section>
+
+<!-- TEACHER DASHBOARD -->
+<section class="screen" id="teacherDashScreen">
+<div class="lms-panel">
+<h2>👩‍🏫 Teacher Dashboard</h2>
+<p style="text-align:center;color:#64748b;" id="teacherEmailDisplay"></p>
+<div class="controls" style="margin-bottom:20px;">
+<button id="createNewQuizBtn" class="success-btn">➕ Create New Quiz</button>
+<button id="viewMinigameLbBtn">🎮 Mini-game Scores</button>
+</div>
+<h3 style="margin-top:20px;color:#1d4ed8;">📚 My Quizzes</h3>
+<div id="myQuizzesList"></div>
+<div class="controls"><button id="teacherDashBack" class="back-btn">🚪 Logout</button></div>
+</div>
+</section>
+
+<!-- TEACHER QUIZ EDITOR -->
+<section class="screen" id="teacherEditorScreen">
+<div class="lms-panel">
+<h2 id="editorTitle">📝 Edit Quiz</h2>
+<div class="quiz-meta-box">
+<label>Quiz Title</label>
+<input type="text" id="quizTitleInput" placeholder="Enter quiz title">
+<label>Description</label>
+<textarea id="quizDescInput" rows="2" placeholder="Short description..."></textarea>
+<label>Visibility</label>
+<select id="quizVisibility">
+<option value="public">🌐 Public (anyone can find)</option>
+<option value="code">🔒 Code-only (hidden)</option>
+</select>
+<label>Quiz Code (auto-generated)</label>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+<input type="text" id="quizCode" readonly style="flex:1;min-width:120px;background:#e2e8f0;">
+<button id="copyCodeBtn" class="small-btn" style="max-width:120px;">📋 Copy</button>
+</div>
+<label>Shareable Link</label>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+<input type="text" id="quizLink" readonly style="flex:1;min-width:200px;background:#e2e8f0;font-size:.85rem;">
+<button id="copyLinkBtn" class="small-btn" style="max-width:120px;">📋 Copy</button>
+</div>
+</div>
+
+<!-- MODE TOGGLE FOR QUESTIONS -->
+<div class="mode-toggle">
+<button id="bulkModeBtn" class="active">📝 Bulk Add (Easy)</button>
+<button id="singleModeBtn">✏️ Edit Individual</button>
+</div>
+
+<div class="question-count-badge" id="questionCountBadge">0 Questions</div>
+
+<!-- BULK EDITOR -->
+<div class="bulk-editor-box" id="bulkEditorBox">
+<h3>📝 Bulk Question Editor</h3>
+<p>Add multiple questions at once! Follow the format below:</p>
+<div class="format-hint">
+<strong>Format for each question:</strong><br>
+<code>Q: Your question here?</code><br>
+<code>A) First option</code><br>
+<code>B) Second option</code><br>
+<code>C) Third option</code><br>
+<code>D) Fourth option</code><br>
+<code>ANSWER: A</code> (or B, C, D)<br>
+<code>LEVEL: easy</code> (or medium, hard)<br>
+<code>EXPLAIN: Your explanation here</code><br>
+<br>
+<em>Leave a blank line between questions. Example below!</em>
+</div>
+<textarea id="bulkQuestionsInput" placeholder="Q: What does CPU stand for?
+A) Central Processing Unit
+B) Computer Personal Unit
+C) Central Program Utility
+D) Computer Processing Unit
+ANSWER: A
+LEVEL: easy
+EXPLAIN: CPU stands for Central Processing Unit, the brain of the computer.
+
+Q: Which is an input device?
+A) Monitor
+B) Printer
+C) Keyboard
+D) Speaker
+ANSWER: C
+LEVEL: easy
+EXPLAIN: Keyboard is used to input data into the computer."></textarea>
+<div class="bulk-actions">
+<button id="parseQuestionsBtn" class="success-btn">✨ Add Questions</button>
+<button id="clearBulkBtn" class="warn-btn">🗑️ Clear Text</button>
+<button id="loadExampleBtn">📋 Load Example</button>
+</div>
+<p class="error-msg" id="bulkError"></p>
+</div>
+
+<!-- INDIVIDUAL QUESTION EDITOR -->
+<div id="singleEditorBox" style="display:none;">
+<h3 style="color:#1d4ed8;margin:16px 0;">✏️ Questions</h3>
+<div id="questionsEditor"></div>
+<button id="addQuestionBtn" class="success-btn" style="margin-top:12px;">➕ Add Question</button>
+</div>
+
+<div class="controls" style="margin-top:20px;">
+<button id="saveAllBtn" class="success-btn">💾 Save All Changes</button>
+<button id="previewQuizBtn">👁️ Preview Quiz</button>
+<button id="resetLeaderboardBtn" class="warn-btn">🧹 Reset Leaderboard</button>
+<button id="editorBack" class="back-btn">← Back</button>
+</div>
+</div>
+</section>
+
+<!-- TEACHER QUIZ LEADERBOARD -->
+<section class="screen" id="teacherLeaderboardScreen">
+<div class="lms-panel">
+<h2>🏆 Quiz Leaderboard<span id="teacherLbQuizName"></span></h2>
+<div class="leaderboard-section">
+<table><thead><tr><th>#</th><th>Name</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th></tr></thead><tbody id="teacherLbBody"></tbody></table>
+</div>
+<div class="controls"><button id="teacherLbBack" class="back-btn">← Back</button></div>
+</div>
+</section>
+
+<!-- TEACHER MINIGAME LEADERBOARD -->
+<section class="screen" id="teacherMinigameLbScreen">
+<div class="lms-panel">
+<h2>🎮 Mini-game Scores</h2>
+<div class="lb-tabs">
+<button class="active" data-game="dragdrop">🧩 Drag & Drop</button>
+<button data-game="cardgame">🂡 Card Game</button>
+</div>
+<h3 id="teacherMgTitle" style="text-align:center;color:#1d4ed8;margin:14px 0;"></h3>
+<div class="leaderboard-section">
+<table><thead><tr><th>#</th><th>Name</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead><tbody id="teacherMgBody"></tbody></table>
+</div>
+<div class="controls">
+<button id="clearMgScoresBtn" class="warn-btn">🧹 Clear All Scores</button>
+<button id="teacherMgBack" class="back-btn">← Back</button>
+</div>
+</div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section class="screen" id="adminDashScreen">
+<div class="lms-panel">
+<div class="admin-header">
+<h2>🛡️ Admin Dashboard</h2>
+<p>Full control over the ICT Learning Hub</p>
+</div>
+<div class="admin-stats" id="adminStats"></div>
+<div class="admin-tabs">
+<button class="active" data-tab="teachers">👩‍🏫 Teachers</button>
+<button data-tab="students">👨‍🎓 Students</button>
+<button data-tab="quizzes">📚 Quizzes</button>
+<button data-tab="scores">🏆 Scores</button>
+<button data-tab="minigames">🎮 Mini-games</button>
+</div>
+<button id="refreshAdminBtn" class="small-btn" style="margin:10px auto;display:block;max-width:180px;">🔄 Refresh Data</button>
+
+<!-- Teachers Section -->
+<div class="admin-section active" id="adminTeachers">
+<h3 style="color:#7c3aed;">👩‍🏫 Manage Teachers</h3>
+<div class="search-box"><input type="text" id="teacherSearch" placeholder="🔍 Search teachers..."></div>
+<div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Email</th><th>Name</th><th>Quizzes</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="teachersTableBody"></tbody></table></div>
+<div class="controls">
+<button id="addTeacherBtn" class="success-btn">➕ Add Teacher</button>
+<button id="deleteAllTeachersBtn" class="delete-btn">⚠️ Delete All</button>
+</div>
+</div>
+
+<!-- Students Section -->
+<div class="admin-section" id="adminStudents">
+<h3 style="color:#7c3aed;">👨‍🎓 Manage Students</h3>
+<div class="search-box"><input type="text" id="studentSearch" placeholder="🔍 Search students..."></div>
+<div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Name</th><th>Quizzes Taken</th><th>Total Attempts</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="studentsTableBody"></tbody></table></div>
+<div class="controls">
+<button id="deleteAllStudentsBtn" class="delete-btn">⚠️ Delete All</button>
+<button id="resetAllAttemptsBtn" class="warn-btn">🔄 Reset All Attempts</button>
+</div>
+</div>
+
+<!-- Quizzes Section -->
+<div class="admin-section" id="adminQuizzes">
+<h3 style="color:#7c3aed;">📚 Manage Quizzes</h3>
+<div class="search-box"><input type="text" id="quizSearchAdmin" placeholder="🔍 Search quizzes..."></div>
+<div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Title</th><th>Owner</th><th>Code</th><th>Visibility</th><th>Questions</th><th>Attempts</th><th>Actions</th></tr></thead><tbody id="quizzesTableBody"></tbody></table></div>
+<div class="controls"><button id="deleteAllQuizzesBtn" class="delete-btn">⚠️ Delete All</button></div>
+</div>
+
+<!-- Scores Section -->
+<div class="admin-section" id="adminScores">
+<h3 style="color:#7c3aed;">🏆 Quiz Scores</h3>
+<div class="search-box"><input type="text" id="scoreSearch" placeholder="🔍 Search scores..."></div>
+<div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Student</th><th>Quiz</th><th>Level</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead><tbody id="scoresTableBody"></tbody></table></div>
+<div class="controls"><button id="clearAllScoresBtn" class="warn-btn">🧹 Clear All Scores</button></div>
+</div>
+
+<!-- Minigames Section -->
+<div class="admin-section" id="adminMinigames">
+<h3 style="color:#7c3aed;">🎮 Mini-game Scores</h3>
+<div class="lb-tabs">
+<button class="active" data-mgame="dragdrop">🧩 Drag & Drop</button>
+<button data-mgame="cardgame">🂡 Card Game</button>
+</div>
+<div class="search-box"><input type="text" id="mgSearch" placeholder="🔍 Search scores..."></div>
+<div style="overflow-x:auto;"><table class="admin-table"><thead><tr><th>Student</th><th>Game</th><th>Score</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead><tbody id="mgTableBody"></tbody></table></div>
+<div class="controls"><button id="clearAllMgScoresBtn" class="warn-btn">🧹 Clear All</button></div>
+</div>
+
+<div class="controls" style="margin-top:30px;"><button id="adminDashBack" class="back-btn">🚪 Logout</button></div>
+</div>
+</section>
+
+<!-- EMAIL MODAL -->
+<div class="email-modal" id="emailModal">
+<div class="email-content">
+<div class="email-header">
+<h3>📧 Password Reset Email</h3>
+<p>From: <span id="modalEmailFrom"></span></p>
+<p>To: <span id="modalEmailTo"></span></p>
+<p>Subject: <span id="modalEmailSubject"></span></p>
+</div>
+<div class="email-body">
+<p>Hello <strong id="modalUserName"></strong>,</p>
+<p id="modalEmailIntro"></p>
+<p><strong>Your reset code is:</strong></p>
+<div class="reset-token-display" id="modalResetToken"></div>
+<p id="modalEmailFooter"></p>
+</div>
+<button id="closeEmailModal" class="success-btn">✅ Got it!</button>
+</div>
+</div>
+
+<!-- GAME IFRAME CONTAINER -->
+<div class="game-frame-container" id="gameFrameContainer">
+<div class="game-frame-topbar">
+<h3 id="gameFrameTitle">🎮 Game</h3>
 <span class="auto-save-badge">✨ Auto-saves when game ends</span>
 <button class="exit-game-btn" id="exitGameBtn">✕ Exit Game</button>
 </div>
@@ -268,7 +676,109 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <iframe class="game-iframe" id="gameIframe" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
 </div>
 
-@@ -911,6 +829,8 @@
+<footer>
+<p>🎓 ICT Gamified Learning Hub &copy; 2024 | Cloud-synced across all devices</p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "[gstatic.com](https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js)";
+import { getDatabase, ref, set, onValue } from "[gstatic.com](https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js)";
+
+const firebaseConfig = {
+apiKey: "AIzaSyA86c82WvfNU6hVc0UhbnF2dw-5R-o0kSM",
+authDomain: "ict-quiz-lms.firebaseapp.com",
+databaseURL: "[ict-quiz-lms-default-rtdb.asia-southeast1.firebasedatabase.app](https://ict-quiz-lms-default-rtdb.asia-southeast1.firebasedatabase.app)",
+projectId: "ict-quiz-lms",
+storageBucket: "ict-quiz-lms.firebasestorage.app",
+messagingSenderId: "274654306099",
+appId: "1:274654306099:web:6bf387f00cd955de7f7c00"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const $=id=>document.getElementById(id);
+function escapeHtml(t){ return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function genId(){ return 'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function genCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function genResetToken(){ return Math.floor(100000+Math.random()*900000).toString(); }
+function fmtDate(d){ return d?new Date(d).toLocaleDateString():"-"; }
+function shuffleArray(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function calculateGrade(score,total){
+const pct=Math.round((score/total)*100);
+let letter="F",label="Needs Improvement";
+if(pct>=90){ letter="A"; label="Excellent!"; }
+else if(pct>=80){ letter="B"; label="Great Job!"; }
+else if(pct>=70){ letter="C"; label="Good Effort!"; }
+else if(pct>=60){ letter="D"; label="Keep Practicing!"; }
+return {pct,letter,label};
+}
+function gradeBadge(score,total){
+const g=calculateGrade(score,total);
+return `<span class="grade-badge grade-${g.letter}">${g.letter} (${g.pct}%)</span>`;
+}
+function gradeBadgeSmall(score,total){
+const g=calculateGrade(score,total);
+return `<span class="badge grade-${g.letter}" style="font-size:.8rem;padding:4px 10px;">${g.letter}</span>`;
+}
+
+let teachers={}, students={}, quizzes={}, leaderboard=[], resetTokens={}, minigameScores={dragdrop:[],cardgame:[]};
+
+function showScreen(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+$(id).classList.add("active");
+}
+
+function toast(msg,type="info"){
+const c=$("toastContainer"), t=document.createElement("div");
+t.className=`toast ${type}`; t.textContent=msg; c.appendChild(t);
+setTimeout(()=>{ t.classList.add("fade-out"); setTimeout(()=>t.remove(),300); },3500);
+}
+
+function copyToClipboard(text,successMsg){
+navigator.clipboard.writeText(text).then(()=>toast(successMsg||"Copied!","success")).catch(()=>toast("Copy failed","error"));
+}
+
+const cloudIndicator=$("cloudIndicator"), cloudDot=cloudIndicator.querySelector(".cloud-dot"), cloudStatus=$("cloudStatus");
+function setCloudState(state){
+cloudIndicator.className="cloud-indicator "+state;
+cloudDot.className="cloud-dot"+(state==="syncing"?" pulse":"");
+cloudStatus.textContent=state==="online"?"Live Sync":state==="syncing"?"Syncing...":"Offline";
+}
+
+let saveTimeout=null;
+function saveAll(){
+clearTimeout(saveTimeout);
+setCloudState("syncing");
+saveTimeout=setTimeout(()=>{
+const data={teachers,students,quizzes,leaderboard,resetTokens,minigameScores};
+set(ref(db,"lmsData"),data).then(()=>setCloudState("online")).catch(e=>{console.error(e);setCloudState("offline");});
+},600);
+}
+
+async function initCloud(){
+return new Promise(resolve=>{
+const dataRef=ref(db,"lmsData");
+onValue(dataRef,snapshot=>{
+const d=snapshot.val();
+if(d){
+teachers=d.teachers||{}; students=d.students||{}; quizzes=d.quizzes||{};
+leaderboard=d.leaderboard||[]; resetTokens=d.resetTokens||{};
+minigameScores=d.minigameScores||{dragdrop:[],cardgame:[]};
+}
+setCloudState("online");
+refreshCurrentView();
+resolve(true);
+},error=>{
+console.error("Firebase error:",error);
+setCloudState("offline");
+resolve(false);
+});
+});
+}
+
+function refreshCurrentView(){
 if(currentUser?.role==="admin" && $("adminDashScreen").classList.contains("active")){ renderAdminStats(); renderAdminTables(); }
 if(currentUser?.role==="student" && $("studentQuizBrowser").classList.contains("active")) renderPublicQuizzes();
 if(currentUser?.role==="teacher" && $("teacherDashScreen").classList.contains("active")) renderMyQuizzes();
@@ -277,7 +787,9 @@ if($("minigameLbScreen").classList.contains("active") && currentMgView) renderMi
 }
 
 let currentUser = null;
-@@ -921,6 +841,7 @@
+let currentQuizId = null;
+let editingQuizId = null;
+let isPreviewMode = false;
 let editorFromAdmin = false;
 let activeMinigame = null;
 let lastSavedScoreKey = null;
@@ -285,21 +797,91 @@ let currentMgView = null;
 
 function saveSession(remember) {
 if(!currentUser) return;
-@@ -1124,9 +1045,20 @@
+const storage = remember ? localStorage : sessionStorage;
+storage.setItem("ict_session", JSON.stringify(currentUser));
+if(!remember) localStorage.removeItem("ict_session");
+}
+function loadSession() {
+const ls = localStorage.getItem("ict_session");
+const ss = sessionStorage.getItem("ict_session");
+if(ls) return JSON.parse(ls);
+if(ss) return JSON.parse(ss);
+return null;
+}
+function clearSession() {
+localStorage.removeItem("ict_session");
+sessionStorage.removeItem("ict_session");
+}
+
+function updateTopNav() {
+const nav = $("topNav");
+if(!currentUser) { nav.style.display = "none"; return; }
+nav.style.display = "flex";
+const badge = $("userBadge");
+if(currentUser.role === "admin") { badge.textContent = "🛡️ Admin"; badge.className = "user-badge admin-badge"; }
+else if(currentUser.role === "teacher") { badge.textContent = "👩‍🏫 " + (currentUser.displayName || currentUser.email); badge.className = "user-badge"; }
+else { badge.textContent = "👨‍🎓 " + currentUser.name; badge.className = "user-badge"; }
+}
+
+function doLogout() {
+clearSession(); currentUser = null;
+$("gameFrameContainer").classList.remove("active"); $("gameIframe").src = "about:blank";
+activeMinigame = null; lastSavedScoreKey = null;
+showScreen("roleScreen"); updateTopNav();
+toast("👋 Logged out", "info");
+}
+
+(function spawnGadgets(){
+const gadgets=["💻","📱","🖥️","⌨️","🖱️","🎮","📷","🔌","💾","📡","🖨️","🔋"];
+const bg=$("gadgetBg");
+for(let i=0;i<18;i++){
+const g=document.createElement("span");
+g.className="gadget";
+g.textContent=gadgets[Math.floor(Math.random()*gadgets.length)];
+g.style.top=Math.random()*100+"vh";
+g.style.animationDelay=Math.random()*-24+"s";
+g.style.animationDuration=(18+Math.random()*14)+"s";
+bg.appendChild(g);
+}
+})();
+
+$("studentRoleBtn").onclick=()=>showScreen("studentAuthScreen");
+$("teacherRoleBtn").onclick=()=>{ showScreen("teacherAuthScreen"); $("teacherLoginBox").style.display="block"; $("teacherRegisterBox").style.display="none"; $("forgotPassBox").style.display="none"; $("enterCodeBox").style.display="none"; };
+$("adminRoleBtn").onclick=()=>showScreen("adminAuthScreen");
+$("studentBack").onclick=()=>showScreen("roleScreen");
+$("teacherBackBtn").onclick=()=>showScreen("roleScreen");
+$("adminBackBtn").onclick=()=>showScreen("roleScreen");
+
+$("studentSubmit").onclick=()=>{
+const name=$("studentName").value.trim(), remember=$("rememberMeStudent").checked;
+if(name.length<2){ $("studentError").textContent="Name must be at least 2 characters."; return; }
+const key=name.toLowerCase();
+if(!students[key]) students[key]={name,attempts:{},createdAt:new Date().toISOString()};
+currentUser={role:"student",name,key}; saveAll(); saveSession(remember); openStudentHub();
+};
+
+function openStudentHub(){
+showScreen("studentHubScreen"); updateTopNav();
+$("studentWelcome").textContent=`Welcome, ${currentUser.name}! Choose a game or quiz.`;
+}
+
+$("browseQuizzesBtn").onclick=()=>{
+showScreen("studentQuizBrowser"); updateTopNav(); renderPublicQuizzes();
+};
+
+function launchMinigame(gameKey, title, url) {
+if(!currentUser || currentUser.role !== "student"){ toast("Login as student first.","error"); return; }
 activeMinigame = gameKey;
 lastSavedScoreKey = null;
 $("gameFrameTitle").textContent = title;
-$("gameIframe").src = url;
 $("manualSaveBox").classList.add("active");
 $("manualScore").value = "";
 $("manualMax").value = "100";
 const iframe = $("gameIframe");
 iframe.src = url;
 $("gameFrameContainer").classList.add("active");
-toast("🎮 Have fun! Your score will save automatically.","info");
 toast("🎮 Have fun! Score will save automatically when game ends.","info");
 
-// Tell the iframe (when loaded) that parent is ready to receive scores
 iframe.onload = ()=>{
 try {
 iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser.name }, "*");
@@ -307,8 +889,9 @@ iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser
 };
 }
 
-$("playDragDropBtn").onclick=()=>launchMinigame("dragdrop","🧩 Drag & Drop","https://bryceabi-alt.github.io/minigames/draganddrop.html");
-@@ -1138,36 +1070,29 @@
+$("playDragDropBtn").onclick=()=>launchMinigame("dragdrop","🧩 Drag & Drop","[bryceabi-alt.github.io](https://bryceabi-alt.github.io/minigames/draganddrop.html)");
+$("playCardGameBtn").onclick=()=>launchMinigame("cardgame","🂡 Card Game","[bryceabi-alt.github.io](https://bryceabi-alt.github.io/minigames/cardgame.html)");
+
 $("exitGameBtn").onclick=()=>{
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
@@ -317,12 +900,6 @@ activeMinigame=null;
 lastSavedScoreKey=null;
 };
 
-// ============ AUTO-SAVE SCORES FROM IFRAME GAMES ============
-window.addEventListener("message", (event)=>{
-const data = event.data;
-if(!data || typeof data !== "object") return;
-if(data.type !== "GAME_SCORE" && data.score === undefined) return;
-// ===== MANUAL SAVE FALLBACK =====
 $("manualSaveBtn").onclick=()=>{
 const sc = parseInt($("manualScore").value);
 const mx = parseInt($("manualMax").value);
@@ -331,67 +908,39 @@ if(sc > mx){ toast("Score can't exceed max","error"); return; }
 recordMinigameScore(sc, mx, true);
 };
 
-const score = parseInt(data.score);
-const max = parseInt(data.max || data.total || data.maxScore || 100);
-if(isNaN(score) || isNaN(max) || max <= 0) return;
-// ============ CORE: RECORD MINIGAME SCORE ============
 function recordMinigameScore(score, max, manual=false) {
 if(!activeMinigame){ toast("⚠️ No active game session","error"); return; }
 if(!currentUser || currentUser.role !== "student"){ toast("⚠️ Not logged in as student","error"); return; }
 
-if(!activeMinigame) {
-console.warn("Score received but no active minigame.");
-return;
-}
-if(!currentUser || currentUser.role !== "student") {
-toast("⚠️ Score received but you're not logged in as a student.","error");
-return;
-}
-
-const dedupKey = `${activeMinigame}_${score}_${max}_${currentUser.name}`;
-if(lastSavedScoreKey === dedupKey) {
-console.log("Duplicate score ignored.");
-return;
-}
 const dedupKey = `${activeMinigame}_${score}_${max}_${currentUser.name}_${Math.floor(Date.now()/5000)}`;
 if(lastSavedScoreKey === dedupKey){ console.log("Duplicate ignored"); return; }
 lastSavedScoreKey = dedupKey;
-setTimeout(()=>{ if(lastSavedScoreKey === dedupKey) lastSavedScoreKey = null; }, 3000);
 setTimeout(()=>{ if(lastSavedScoreKey === dedupKey) lastSavedScoreKey = null; }, 5000);
 
 const grade = calculateGrade(score, max);
 if(!minigameScores[activeMinigame]) minigameScores[activeMinigame] = [];
-@@ -1178,606 +1103,646 @@
+minigameScores[activeMinigame].push({
+name: currentUser.name,
+score: score,
 total: max,
 grade: grade.letter,
 percentage: grade.pct,
-date: new Date().toLocaleString()
 date: new Date().toLocaleString(),
 timestamp: Date.now()
 });
 saveAll();
 
-toast(`🎉 Score saved: ${score}/${max} — Grade ${grade.letter}!`, "success");
-if(grade.pct === 100) {
-setTimeout(()=>toast("🌟 PERFECT SCORE! Amazing!", "success"), 400);
-} else if(grade.pct >= 90) {
-setTimeout(()=>toast("🏆 Excellent work!", "success"), 400);
-} else if(grade.pct >= 70) {
-setTimeout(()=>toast("👍 Nice job!", "success"), 400);
 toast(`🎉 ${manual?"Manually saved":"Auto-saved"}: ${score}/${max} — Grade ${grade.letter}!`, "success");
 if(grade.pct === 100) setTimeout(()=>toast("🌟 PERFECT SCORE!", "success"), 400);
 else if(grade.pct >= 90) setTimeout(()=>toast("🏆 Excellent work!", "success"), 400);
 else if(grade.pct >= 70) setTimeout(()=>toast("👍 Nice job!", "success"), 400);
 }
 
-// ============ MESSAGE LISTENER (handles many formats) ============
 window.addEventListener("message", (event)=>{
 const data = event.data;
 if(!data) return;
 
-// Skip non-relevant messages
 if(typeof data === "string"){
-// Try parse if string
 try { const p = JSON.parse(data); if(p && typeof p === "object") return handleMessageData(p); } catch(e){ return; }
 return;
 }
@@ -400,7 +949,6 @@ handleMessageData(data);
 });
 
 function handleMessageData(data){
-// Recognized score message types
 const isScoreMsg = data.type === "GAME_SCORE" 
 || data.type === "score" 
 || data.type === "GAME_OVER" 
@@ -425,19 +973,11 @@ console.log("✅ Score message received:", { score, max, raw: data });
 recordMinigameScore(score, max, false);
 }
 
-// ============ MINIGAME LEADERBOARD ============
 function showMinigameLeaderboard(gameKey) {
 currentMgView = gameKey;
 const title = gameKey === "dragdrop" ? "🧩 Drag & Drop" : "🂡 Card Game";
 $("minigameLbTitle").textContent = `🏆 ${title} Leaderboard`;
 $("minigameLbDesc").textContent = "Top 10 highest scoring students";
-const scores = (minigameScores[gameKey]||[]).slice().sort((a,b)=>(b.score/b.total)-(a.score/a.total)).slice(0,10);
-const body = $("minigameLbBody");
-if(scores.length === 0) {
-body.innerHTML = `<tr><td colspan="5">No scores yet. Be the first to play!</td></tr>`;
-} else {
-body.innerHTML = scores.map((s,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td><td>${s.score}/${s.total}</td><td>${gradeBadgeSmall(s.score,s.total)}</td><td style="font-size:.85rem;">${s.date}</td></tr>`).join("");
-}
 renderMinigameLeaderboardLive();
 showScreen("minigameLbScreen"); updateTopNav();
 }
@@ -614,6 +1154,79 @@ if(sorted.length===0){ body.innerHTML=`<tr><td colspan="6">No scores yet. Be the
 body.innerHTML=sorted.map((e,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(e.name)}</td><td>${e.level}</td><td>${e.score}/${e.total}</td><td>${gradeBadgeSmall(e.score,e.total)}</td><td style="font-size:.85rem;">${e.date}</td></tr>`).join("");
 }
 
+// ============ TEACHER AUTH ============
+$("showRegisterBtn").onclick=()=>{ $("teacherLoginBox").style.display="none"; $("teacherRegisterBox").style.display="block"; };
+$("showLoginBtn").onclick=()=>{ $("teacherRegisterBox").style.display="none"; $("teacherLoginBox").style.display="block"; };
+$("forgotPassBtn").onclick=()=>{ $("teacherLoginBox").style.display="none"; $("forgotPassBox").style.display="block"; };
+$("cancelResetBtn").onclick=()=>{ $("forgotPassBox").style.display="none"; $("teacherLoginBox").style.display="block"; };
+$("backToForgotBtn").onclick=()=>{ $("enterCodeBox").style.display="none"; $("forgotPassBox").style.display="block"; };
+$("closeEmailModal").onclick=()=>$("emailModal").classList.remove("active");
+
+$("teacherLoginBtn").onclick=()=>{
+const email=$("teacherEmail").value.trim().toLowerCase(), pass=$("teacherPassword").value, remember=$("rememberMeTeacher").checked;
+$("teacherError").textContent="";
+if(!email||!pass){ $("teacherError").textContent="Enter email and password."; return; }
+if(!teachers[email]){ $("teacherError").textContent="Account not found."; return; }
+if(teachers[email].password!==pass){ $("teacherError").textContent="Wrong password."; return; }
+currentUser={role:"teacher",email,displayName:teachers[email].displayName}; saveSession(remember); openTeacherDashboard();
+};
+
+$("registerSubmitBtn").onclick=()=>{
+const name=$("regName").value.trim(), email=$("regEmail").value.trim().toLowerCase(), pass=$("regPassword").value, conf=$("regConfirm").value;
+$("registerError").textContent="";
+if(name.length<2){ $("registerError").textContent="Name too short."; return; }
+if(!email.endsWith("@gmail.com")){ $("registerError").textContent="Must be a Gmail address."; return; }
+if(pass.length<6){ $("registerError").textContent="Password min 6 chars."; return; }
+if(pass!==conf){ $("registerError").textContent="Passwords don't match."; return; }
+if(teachers[email]){ $("registerError").textContent="Email already registered."; return; }
+teachers[email]={password:pass,displayName:name,createdAt:new Date().toISOString()}; saveAll();
+toast("✅ Account created! Please login.","success");
+$("teacherRegisterBox").style.display="none"; $("teacherLoginBox").style.display="block";
+$("teacherEmail").value=email; $("teacherPassword").value="";
+};
+
+let pendingResetEmail="";
+$("sendResetBtn").onclick=()=>{
+const email=$("resetEmail").value.trim().toLowerCase();
+$("resetError").textContent="";
+if(!teachers[email]){ $("resetError").textContent="No account with this email."; return; }
+const token=genResetToken();
+resetTokens[email]={token,expiresAt:Date.now()+15*60*1000}; saveAll();
+pendingResetEmail=email;
+$("modalEmailFrom").textContent="noreply@ictquizzes.com";
+$("modalEmailTo").textContent=email;
+$("modalEmailSubject").textContent="Password Reset Request";
+$("modalUserName").textContent=teachers[email].displayName;
+$("modalEmailIntro").innerHTML=`You requested a password reset. Use the code below within <strong>15 minutes</strong>.`;
+$("modalResetToken").textContent=token;
+$("modalEmailFooter").textContent="If you didn't request this, ignore this email.";
+$("emailModal").classList.add("active");
+$("forgotPassBox").style.display="none"; $("enterCodeBox").style.display="block";
+};
+
+$("verifyCodeBtn").onclick=()=>{
+const code=$("resetCodeInput").value.trim(), newPass=$("newPassword").value;
+$("codeError").textContent="";
+if(!pendingResetEmail){ $("codeError").textContent="Session expired."; return; }
+const rt=resetTokens[pendingResetEmail];
+if(!rt||rt.token!==code){ $("codeError").textContent="Invalid code."; return; }
+if(Date.now()>rt.expiresAt){ $("codeError").textContent="Code expired."; delete resetTokens[pendingResetEmail]; saveAll(); return; }
+if(newPass.length<6){ $("codeError").textContent="Password min 6 chars."; return; }
+teachers[pendingResetEmail].password=newPass; delete resetTokens[pendingResetEmail]; saveAll();
+toast("✅ Password reset! Please login.","success");
+$("enterCodeBox").style.display="none"; $("teacherLoginBox").style.display="block";
+$("teacherEmail").value=pendingResetEmail; $("teacherPassword").value=""; pendingResetEmail="";
+};
+
+// ============ ADMIN AUTH ============
+$("adminLoginBtn").onclick=()=>{
+const pass=$("adminPassword").value;
+$("adminError").textContent="";
+if(pass!=="admin123"){ $("adminError").textContent="Wrong password."; return; }
+currentUser={role:"admin"}; saveSession(true); openAdminDashboard();
+toast("🛡️ Admin access granted","admin");
+};
+
 function openTeacherDashboard() {
 showScreen("teacherDashScreen"); updateTopNav();
 $("teacherEmailDisplay").textContent=`${currentUser.displayName} (${currentUser.email})`;
@@ -648,7 +1261,7 @@ $("teacherLbBack").onclick=()=>openTeacherDashboard();
 
 $("createNewQuizBtn").onclick=()=>{
 const id=genId();
-quizzes[id]={id,code:genCode(),title:"New Quiz",desc:"",ownerEmail:currentUser.email,ownerName:currentUser.displayName,visibility:"public",questions:[{q:"Sample question?",o:["A","B","C","D"],a:0,l:"easy",e:"Explanation."}],createdAt:new Date().toISOString()};
+quizzes[id]={id,code:genCode(),title:"New Quiz",desc:"",ownerEmail:currentUser.email,ownerName:currentUser.displayName,visibility:"public",questions:[],createdAt:new Date().toISOString()};
 saveAll(); editingQuizId=id; toast("✨ Created!","success"); openEditor();
 };
 
@@ -695,6 +1308,9 @@ toast("🧹 Cleared","info"); renderTeacherMg();
 
 $("teacherDashBack").onclick=()=>{ if(!confirm("Log out?")) return; doLogout(); };
 
+// ============ QUIZ EDITOR WITH BULK ADD ============
+let editorMode = "bulk"; // "bulk" or "single"
+
 function openEditor(fromAdmin) {
 editorFromAdmin=!!fromAdmin;
 showScreen("teacherEditorScreen"); updateTopNav();
@@ -704,26 +1320,206 @@ $("editorTitle").textContent=(editorFromAdmin?"🛡️ Admin Edit: ":"📝 Edit:
 $("quizTitleInput").value=qz.title; $("quizDescInput").value=qz.desc||"";
 $("quizVisibility").value=qz.visibility; $("quizCode").value=qz.code;
 $("quizLink").value=`${location.origin}${location.pathname}?quiz=${qz.code}`;
+updateQuestionCount();
+setEditorMode("bulk");
 renderQuestionsEditor();
 }
+
+function updateQuestionCount() {
+const qz = quizzes[editingQuizId];
+const count = qz?.questions?.length || 0;
+$("questionCountBadge").textContent = `${count} Question${count !== 1 ? 's' : ''}`;
+}
+
+function setEditorMode(mode) {
+editorMode = mode;
+$("bulkModeBtn").classList.toggle("active", mode === "bulk");
+$("singleModeBtn").classList.toggle("active", mode === "single");
+$("bulkEditorBox").style.display = mode === "bulk" ? "block" : "none";
+$("singleEditorBox").style.display = mode === "single" ? "block" : "none";
+if(mode === "single") renderQuestionsEditor();
+}
+
+$("bulkModeBtn").onclick = () => setEditorMode("bulk");
+$("singleModeBtn").onclick = () => setEditorMode("single");
 
 $("copyLinkBtn").onclick=()=>copyToClipboard($("quizLink").value,"Link copied!");
 $("copyCodeBtn").onclick=()=>copyToClipboard($("quizCode").value,"Code copied!");
 
+// ============ BULK QUESTION PARSER ============
+function parseBulkQuestions(text) {
+const questions = [];
+const blocks = text.split(/\n\s*\n/).filter(b => b.trim());
+const errors = [];
+
+for (let i = 0; i < blocks.length; i++) {
+const block = blocks[i].trim();
+if (!block) continue;
+
+const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+const question = { q: "", o: [], a: 0, l: "easy", e: "" };
+
+let questionText = "";
+let options = [];
+let answer = "";
+let level = "easy";
+let explanation = "";
+
+for (const line of lines) {
+if (line.match(/^Q:\s*/i)) {
+questionText = line.replace(/^Q:\s*/i, "").trim();
+} else if (line.match(/^A\)\s*/i)) {
+options[0] = line.replace(/^A\)\s*/i, "").trim();
+} else if (line.match(/^B\)\s*/i)) {
+options[1] = line.replace(/^B\)\s*/i, "").trim();
+} else if (line.match(/^C\)\s*/i)) {
+options[2] = line.replace(/^C\)\s*/i, "").trim();
+} else if (line.match(/^D\)\s*/i)) {
+options[3] = line.replace(/^D\)\s*/i, "").trim();
+} else if (line.match(/^ANSWER:\s*/i)) {
+answer = line.replace(/^ANSWER:\s*/i, "").trim().toUpperCase();
+} else if (line.match(/^LEVEL:\s*/i)) {
+level = line.replace(/^LEVEL:\s*/i, "").trim().toLowerCase();
+} else if (line.match(/^EXPLAIN:\s*/i)) {
+explanation = line.replace(/^EXPLAIN:\s*/i, "").trim();
+}
+}
+
+// Validate
+if (!questionText) {
+errors.push(`Block ${i + 1}: Missing question (Q: ...)`);
+continue;
+}
+if (options.filter(o => o).length < 4) {
+errors.push(`Block ${i + 1}: Need 4 options (A, B, C, D)`);
+continue;
+}
+if (!["A", "B", "C", "D"].includes(answer)) {
+errors.push(`Block ${i + 1}: Invalid answer (must be A, B, C, or D)`);
+continue;
+}
+if (!["easy", "medium", "hard"].includes(level)) {
+level = "easy";
+}
+
+question.q = questionText;
+question.o = options;
+question.a = ["A", "B", "C", "D"].indexOf(answer);
+question.l = level;
+question.e = explanation || "No explanation provided.";
+
+questions.push(question);
+}
+
+return { questions, errors };
+}
+
+$("parseQuestionsBtn").onclick = () => {
+const text = $("bulkQuestionsInput").value.trim();
+$("bulkError").textContent = "";
+
+if (!text) {
+$("bulkError").textContent = "Please enter some questions first.";
+return;
+}
+
+const { questions, errors } = parseBulkQuestions(text);
+
+if (errors.length > 0) {
+$("bulkError").innerHTML = "⚠️ Errors found:<br>" + errors.slice(0, 5).join("<br>");
+if (errors.length > 5) {
+$("bulkError").innerHTML += `<br>...and ${errors.length - 5} more errors`;
+}
+return;
+}
+
+if (questions.length === 0) {
+$("bulkError").textContent = "No valid questions found. Check the format.";
+return;
+}
+
+// Add questions to quiz
+const qz = quizzes[editingQuizId];
+qz.questions.push(...questions);
+saveAll();
+
+toast(`✨ Added ${questions.length} question${questions.length > 1 ? 's' : ''}!`, "success");
+$("bulkQuestionsInput").value = "";
+updateQuestionCount();
+renderQuestionsEditor();
+};
+
+$("clearBulkBtn").onclick = () => {
+$("bulkQuestionsInput").value = "";
+$("bulkError").textContent = "";
+};
+
+$("loadExampleBtn").onclick = () => {
+$("bulkQuestionsInput").value = `Q: What does CPU stand for?
+A) Central Processing Unit
+B) Computer Personal Unit
+C) Central Program Utility
+D) Computer Processing Unit
+ANSWER: A
+LEVEL: easy
+EXPLAIN: CPU stands for Central Processing Unit, which is the primary component that processes instructions in a computer.
+
+Q: Which of the following is an input device?
+A) Monitor
+B) Printer
+C) Keyboard
+D) Speaker
+ANSWER: C
+LEVEL: easy
+EXPLAIN: A keyboard is used to input data into the computer. Monitors, printers, and speakers are output devices.
+
+Q: What does RAM stand for?
+A) Random Access Memory
+B) Read Access Memory
+C) Run Access Memory
+D) Real Access Memory
+ANSWER: A
+LEVEL: easy
+EXPLAIN: RAM stands for Random Access Memory, which is temporary storage that the computer uses while running programs.
+
+Q: Which programming language is primarily used for web development?
+A) Python
+B) JavaScript
+C) C++
+D) Java
+ANSWER: B
+LEVEL: medium
+EXPLAIN: JavaScript is the primary programming language used for web development, running in browsers to create interactive websites.
+
+Q: What is the binary representation of the decimal number 10?
+A) 1010
+B) 1100
+C) 1001
+D) 1110
+ANSWER: A
+LEVEL: hard
+EXPLAIN: 10 in decimal equals 1010 in binary (8+0+2+0 = 10).`;
+toast("📋 Example loaded! Click 'Add Questions' to add them.", "info");
+};
+
 function renderQuestionsEditor() {
 const c=$("questionsEditor"); c.innerHTML="";
 const qz=quizzes[editingQuizId];
+if (!qz.questions || qz.questions.length === 0) {
+c.innerHTML = `<div class="empty-state"><div class="icon">❓</div><h3>No questions yet</h3><p>Use Bulk Add mode to quickly add multiple questions!</p></div>`;
+return;
+}
 qz.questions.forEach((q,i)=>{
 const d=document.createElement("div"); d.className="q-editor";
 d.innerHTML=`<label>Question #${i+1}</label><textarea data-idx="${i}" data-field="q" rows="2">${escapeHtml(q.q)}</textarea><label>Options (one per line)</label><textarea data-idx="${i}" data-field="o" rows="4">${q.o.map(escapeHtml).join("\n")}</textarea><label>Correct Answer Index (0-3)</label><input type="number" min="0" max="3" data-idx="${i}" data-field="a" value="${q.a}"><label>Difficulty</label><select data-idx="${i}" data-field="l"><option value="easy" ${q.l==="easy"?"selected":""}>Easy</option><option value="medium" ${q.l==="medium"?"selected":""}>Medium</option><option value="hard" ${q.l==="hard"?"selected":""}>Hard</option></select><label>Explanation</label><input type="text" data-idx="${i}" data-field="e" value="${escapeHtml(q.e)}"><button class="delete-btn small-btn" data-del="${i}">🗑 Delete Question</button>`;
 c.appendChild(d);
 });
-c.querySelectorAll("[data-del]").forEach(btn=>{ btn.onclick=()=>{ if(confirm("Delete?")){ quizzes[editingQuizId].questions.splice(+btn.dataset.del,1); saveAll(); renderQuestionsEditor(); }}; });
+c.querySelectorAll("[data-del]").forEach(btn=>{ btn.onclick=()=>{ if(confirm("Delete?")){ quizzes[editingQuizId].questions.splice(+btn.dataset.del,1); saveAll(); updateQuestionCount(); renderQuestionsEditor(); }}; });
 }
 
 $("addQuestionBtn").onclick=()=>{
 quizzes[editingQuizId].questions.push({q:"New Question",o:["A","B","C","D"],a:0,l:"easy",e:"Explanation."});
-saveAll(); renderQuestionsEditor();
+saveAll(); updateQuestionCount(); renderQuestionsEditor();
 };
 
 $("saveAllBtn").onclick=()=>{
@@ -739,6 +1535,7 @@ else qz.questions[idx][field]=f.value;
 });
 saveAll(); toast("💾 Saved!","success");
 $("editorTitle").textContent=(editorFromAdmin?"🛡️ Admin Edit: ":"📝 Edit: ")+qz.title;
+updateQuestionCount();
 };
 
 $("resetLeaderboardBtn").onclick=()=>{
@@ -746,13 +1543,18 @@ if(confirm("Clear leaderboard?")){ leaderboard=leaderboard.filter(l=>l.quizId!==
 };
 
 $("previewQuizBtn").onclick=()=>{
+const qz = quizzes[editingQuizId];
+if (!qz.questions || qz.questions.length === 0) {
+toast("Add some questions first!", "error");
+return;
+}
 isPreviewMode=true; currentQuizId=editingQuizId;
 showScreen("difficultyScreen"); updateTopNav();
-$("quizTitleHeader").textContent=quizzes[currentQuizId].title+" (Preview)";
+$("quizTitleHeader").textContent=qz.title+" (Preview)";
 $("welcomeMsg").textContent="Preview mode — results won't be saved.";
 $("resumeSlot").innerHTML="";
 renderLeaderboard(currentQuizId,"leaderboardBody");
-$("leaderboardQuizName").textContent=` — ${quizzes[currentQuizId].title}`;
+$("leaderboardQuizName").textContent=` — ${qz.title}`;
 };
 
 $("editorBack").onclick=()=>{
@@ -1024,4 +1826,3 @@ $("loadingOverlay").style.display="none";
 </script>
 </body>
 </html>
-                  
