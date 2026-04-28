@@ -514,6 +514,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 <div class="controls">
 <button id="addQuestionBtn" class="small-btn">➕ Add Question</button>
+<button id="bulkAddBtn" class="small-btn warn-btn">📋 Bulk Add</button>
 <button id="resetLeaderboardBtn" class="small-btn delete-btn">🧹 Clear This Quiz's Leaderboard</button>
 </div>
 <div id="questionsEditor"></div>
@@ -674,6 +675,33 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <button class="back-btn" id="modalCloseBtn">Close</button>
 </div>
 </div>
+</div>
+
+<!-- BULK ADD MODAL -->
+<div class="email-modal" id="bulkAddModal">
+  <div class="email-content" style="max-width:600px;">
+    <div class="email-header" style="background:#fef3c7; border-bottom-color:#f59e0b;">
+      <h3 style="color:#b45309;">📋 Bulk Add Questions</h3>
+      <p>Paste your questions using the format below.</p>
+    </div>
+    <div class="email-body">
+      <p style="font-size:.9rem; color:#475569;">Separate each question with a blank line. <strong>A:</strong> is the correct answer index (0 = 1st option, 1 = 2nd option, etc.)</p>
+      <pre style="background:#f1f5f9; padding:10px; border-radius:8px; font-size:.85rem; overflow-x:auto; border:1px solid #cbd5e1;">Q: What does CPU stand for?
+O: Central Process Unit
+O: Central Processing Unit
+O: Computer Personal Unit
+O: Central Processor Unit
+A: 1
+L: easy
+E: It is the brain of the computer.</pre>
+      <textarea id="bulkAddTextarea" rows="8" placeholder="Paste your questions here..." style="width:100%; padding:10px; font-size:.95rem; border:2px solid #cbd5e1; border-radius:8px; margin-top:10px; font-family:monospace; resize:vertical;"></textarea>
+      <div class="auth-error" id="bulkAddError"></div>
+    </div>
+    <div class="controls">
+      <button class="success-btn" id="confirmBulkAddBtn">📥 Import Questions</button>
+      <button class="back-btn" id="closeBulkAddBtn">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <footer>© 2026 • Gamified Learning • Pangkat Tatlo • ☁️ Cloud-Synced</footer>
@@ -1447,6 +1475,64 @@ $("addQuestionBtn").onclick=()=>{
 quizzes[editingQuizId].questions.push({q:"New Question",o:["A","B","C","D"],a:0,l:"easy",e:"Explanation."});
 saveAll(); renderQuestionsEditor();
 };
+
+// ============ BULK ADD LOGIC ============
+$("bulkAddBtn").onclick = () => {
+    $("bulkAddTextarea").value = "";
+    $("bulkAddError").textContent = "";
+    $("bulkAddModal").classList.add("active");
+};
+
+$("closeBulkAddBtn").onclick = () => {
+    $("bulkAddModal").classList.remove("active");
+};
+
+$("confirmBulkAddBtn").onclick = () => {
+    const text = $("bulkAddTextarea").value.trim();
+    $("bulkAddError").textContent = "";
+    if(!text) { $("bulkAddError").textContent = "Please enter some questions."; return; }
+
+    const blocks = text.split(/\n\s*\n/);
+    let newQuestions = [];
+
+    try {
+        for(let block of blocks) {
+            let lines = block.split('\n').map(l=>l.trim()).filter(l=>l);
+            if(lines.length === 0) continue;
+
+            let qObj = { q:"", o:[], a:0, l:"easy", e:"" };
+            for(let line of lines) {
+                const prefix = line.substring(0, 2).toUpperCase();
+                const content = line.substring(2).trim();
+                
+                if(prefix === "Q:") qObj.q = content;
+                else if(prefix === "O:") qObj.o.push(content);
+                else if(prefix === "A:") qObj.a = parseInt(content);
+                else if(prefix === "L:") qObj.l = content.toLowerCase();
+                else if(prefix === "E:") qObj.e = content;
+            }
+
+            if(!qObj.q) throw new Error("A question is missing the 'Q:' line.");
+            if(qObj.o.length < 2) throw new Error(`Question "${qObj.q}" must have at least 2 options (O:).`);
+            if(isNaN(qObj.a) || qObj.a < 0 || qObj.a >= qObj.o.length) throw new Error(`Question "${qObj.q}" has an invalid answer index (A:). Remember: 0 is the first option.`);
+            if(!["easy", "medium", "hard"].includes(qObj.l)) qObj.l = "easy";
+
+            newQuestions.push(qObj);
+        }
+
+        if(newQuestions.length === 0) { $("bulkAddError").textContent = "No valid questions found."; return; }
+
+        quizzes[editingQuizId].questions.push(...newQuestions);
+        saveAll();
+        renderQuestionsEditor();
+        $("bulkAddModal").classList.remove("active");
+        toast(`✅ ${newQuestions.length} questions imported!`, "success");
+
+    } catch (err) {
+        $("bulkAddError").textContent = err.message;
+    }
+};
+// =======================================
 
 $("saveAllBtn").onclick=()=>{
 const qz=quizzes[editingQuizId];
