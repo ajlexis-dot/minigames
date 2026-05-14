@@ -1372,51 +1372,55 @@ function injectScoreCatcherIntoIframe(iframe) {
   }
 }
 
+/**
+ * Poll the mini-game iframe’s DOM every 800ms for "score/total" + "game over" text.
+ * As soon as we see a fresh result it calls recordMinigameScore().
+ */
 function startIframePolling() {
+  // stop any previous interval
   stopIframePolling();
   lastIframeScoreSnapshot = null;
-  iframePollInterval = setInterval(()=>{
-    const iframe = $("gameIframe");
-    if(!iframe || !activeMinigame) return;
+
+  iframePollInterval = setInterval(() => {
+    const iframe = document.getElementById('gameIframe');
+    if (!iframe || !activeMinigame) return;
+
     try {
-      const doc = iframe.contentDocument;
-      if(!doc || !doc.body) return;
-      const text = doc.body.innerText || "";
-      
-      const patterns = [
-        /(?:final\s*)?score[:\s]+(\d+)\s*(?:\/|out of|of)\s*(\d+)/i,
-        /(\d+)\s*\/\s*(\d+)\s*(?:correct|points|matches)?/i,
-        /you\s*(?:got|scored)\s*(\d+)\s*(?:\/|out of|of)\s*(\d+)/i
-      ];
-      
-      for(const p of patterns){
-        const m = text.match(p);
-        if(m){
-          const s = parseInt(m[1]);
-          const t = parseInt(m[2]);
-          if(!isNaN(s) && !isNaN(t) && t > 0 && s <= t){
-            const isGameOver = /game\s*over|finished|complete|congratulations|well done|you won|you lost|final/i.test(text);
-            if(isGameOver){
-              const snapshot = `${s}/${t}`;
-              if(snapshot !== lastIframeScoreSnapshot){
-                lastIframeScoreSnapshot = snapshot;
-                console.log("🎯 Polling detected game-over score:", s, "/", t);
-                recordMinigameScore(s, t);
-              }
-              return;
-            }
-          }
+      const text = iframe.contentDocument?.body?.innerText || '';
+
+      // Look for patterns like "Final Score: 7/10" or "7 / 10"
+      const match =
+        text.match(/final\s*score\s*[:\s]+(\d+)\s*\/\s*(\d+)/i) ||
+        text.match(/(\d+)\s*\/\s*(\d+)/);
+
+      if (match) {
+        const s = parseInt(match[1], 10);
+        const t = parseInt(match[2], 10);
+        // Check for game-over keywords
+        const done =
+          /game\s*over|congratulations|you\s+(?:won|lost)/i.test(text);
+        const snapshot = `${s}/${t}`;
+
+        if (done && snapshot !== lastIframeScoreSnapshot) {
+          lastIframeScoreSnapshot = snapshot;
+          recordMinigameScore(s, t);
         }
       }
-    } catch(e){
+    } catch (e) {
+      // If cross-origin prevents us, just ignore
     }
-  }, 1000);
+  }, 800);
 }
 
+/**
+ * Clears the polling interval started by startIframePolling().
+ */
 function stopIframePolling() {
-  if(iframePollInterval){ clearInterval(iframePollInterval); iframePollInterval = null; }
+  if (iframePollInterval) {
+    clearInterval(iframePollInterval);
+    iframePollInterval = null;
+  }
 }
-
 function launchMinigame(gameKey, title, url) {
 if(!currentUser || currentUser.role !== "student") {
 toast("Please log in as a student first to record scores.","error"); return;
@@ -1430,14 +1434,29 @@ iframe.src = url;
 $("gameFrameContainer").classList.add("active");
 toast("🎮 Have fun! Your score will save when the game ends.","info");
 
-iframe.onload = ()=>{
-  console.log("📺 Iframe loaded:", url);
-  setTimeout(()=>{
-    injectScoreCatcherIntoIframe(iframe);
-  }, 500);
-  try {
-    iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser.name }, "*");
-  } catch(e){}
+iframe.onload = () => {
+  // 1) Try injecting our in-game watcher
+  injectScoreCatcherIntoIframe(iframe);
+
+  // 2) Install a single message listener to catch all GAME_SCORE posts
+  if (!window._scoreListenerAdded) {
+    window._scoreListenerAdded = true;
+    window.addEventListener('message', (event) => {
+      const d = event.data;
+      if (d && (d.type === 'GAME_SCORE' || d.type === 'GAME_STORAGE')) {
+        // parse score
+        const raw = d.score != null ? d.score : (d.value || '').match(/\d+/)?.[0];
+        const rawMax = d.max   != null ? d.max   : (d.value || '').match(/\/\s*(\d+)/)?.[1];
+        const s = parseInt(raw, 10);
+        const m = parseInt(rawMax, 10) || 10;
+        if (!isNaN(s) && !isNaN(m)) {
+          recordMinigameScore(s, m);
+        }
+      }
+    });
+  }
+
+  // 3) Start the fallback DOM-polling
   startIframePolling();
 };
 }
