@@ -186,6 +186,156 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 .manual-score-content{background:#fff;border-radius:var(--radius);padding:var(--pad);max-width:450px;width:100%;text-align:center;}
 .manual-score-content h3{color:#1d4ed8;margin-top:0;}
 .manual-score-content input{width:100%;padding:12px;font-size:1.2rem;border:2px solid #3b82f6;border-radius:8px;margin:8px 0;text-align:center;font-family:'Poppins',sans-serif;}
+
+/* ============ SUBJECT FOLDER STYLES ============ */
+.subject-sidebar{
+  width:280px;
+  background:#f3f4f6;
+  border-right:2px solid #dbeafe;
+  padding:16px;
+  height:calc(100vh - 120px);
+  overflow-y:auto;
+  position:fixed;
+  left:0;
+  top:70px;
+}
+.subject-sidebar h3{
+  color:#1d4ed8;
+  font-size:1rem;
+  margin:0 0 12px 0;
+  display:flex;align-items:center;gap:6px;
+}
+.subject-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.subject-btn{
+  background:#fff!important;
+  color:#1e293b!important;
+  border:2px solid #cbd5e1!important;
+  text-align:left!important;
+  padding:10px 12px!important;
+  font-size:.9rem!important;
+  max-width:none!important;
+  width:100%!important;
+  margin:0!important;
+  box-shadow:none!important;
+  transition:all .2s ease!important;
+  border-radius:8px!important;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.subject-btn:hover{
+  background:#dbeafe!important;
+  border-color:#3b82f6!important;
+  transform:translateX(4px);
+}
+.subject-btn.active{
+  background:#3b82f6!important;
+  color:#fff!important;
+  border-color:#1e40af!important;
+  font-weight:600;
+}
+.subject-count{
+  background:rgba(0,0,0,.1);
+  padding:2px 8px;
+  border-radius:12px;
+  font-size:.75rem;
+  font-weight:600;
+}
+.subject-btn .delete-subject{
+  background:transparent!important;
+  color:currentColor!important;
+  border:none!important;
+  padding:2px 4px!important;
+  font-size:.8rem!important;
+  box-shadow:none!important;
+  margin:0!important;
+  width:auto!important;
+  max-width:none!important;
+  opacity:.6;
+  transition:opacity .2s;
+}
+.subject-btn .delete-subject:hover{
+  opacity:1;
+}
+.add-subject-btn{
+  background:#16a34a!important;
+  box-shadow:0 4px 0 #166534!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:10px 0 0!important;
+  font-size:.9rem!important;
+  padding:10px!important;
+}
+.teacher-content{
+  margin-left:280px;
+  padding:20px;
+}
+.student-subject-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:150;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+.student-subject-modal.active{
+  display:flex;
+}
+.student-subject-content{
+  background:#fff;
+  border-radius:var(--radius);
+  padding:var(--pad);
+  max-width:500px;
+  width:100%;
+  box-shadow:0 30px 60px rgba(0,0,0,.3);
+  animation:slideIn .3s ease;
+}
+.student-subject-content h3{
+  color:#1d4ed8;
+  margin-top:0;
+  text-align:center;
+}
+.subject-filter-btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:16px 0;
+}
+.subject-filter-btn{
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+  border:2px solid #3b82f6!important;
+  padding:12px!important;
+  font-size:.9rem!important;
+  box-shadow:0 4px 0 #dbeafe!important;
+  max-width:none!important;
+  width:100%!important;
+  margin:0!important;
+  border-radius:10px!important;
+}
+.subject-filter-btn:hover{
+  background:#dbeafe!important;
+}
+.subject-filter-btn.selected{
+  background:#3b82f6!important;
+  color:#fff!important;
+  border-color:#1e40af!important;
+  box-shadow:0 4px 0 #1e40af!important;
+}
+
+@media(max-width:1024px){
+  .subject-sidebar{ width:200px; }
+  .teacher-content{ margin-left:200px; padding:10px; }
+}
+@media(max-width:768px){
+  .subject-sidebar{ display:none; }
+  .teacher-content{ margin-left:0; }
+  .subject-filter-btns{ grid-template-columns:1fr; }
+}
 @media(max-width:500px){
 .top-nav{top:5px;right:5px;padding:4px 8px;}
 .user-badge{max-width:100px;font-size:.75rem;}
@@ -402,11 +552,12 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- STUDENT QUIZ BROWSER -->
+<!-- STUDENT QUIZ BROWSER WITH SUBJECT FILTER -->
 <div class="screen" id="studentQuizBrowser">
 <div class="lms-panel">
 <h2>📚 Available ICT Quizzes</h2>
 <p style="text-align:center;">Select a quiz created by your teacher, or enter a code.</p>
+<button id="filterBySubjectBtn" class="small-btn admin-btn">🏷️ Filter by Subject</button>
 <input type="text" class="search-box" id="studentQuizSearch" placeholder="🔍 Search for a quiz...">
 <div id="publicQuizzesList"></div>
 <div class="code-fallback">
@@ -418,6 +569,18 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 <div class="controls">
 <button class="back-btn" id="quizBrowserBack">⬅ Back to Games</button>
+</div>
+</div>
+</div>
+
+<!-- STUDENT SUBJECT FILTER MODAL -->
+<div class="student-subject-modal" id="studentSubjectModal">
+<div class="student-subject-content">
+<h3>📚 Choose Subject</h3>
+<p style="text-align:center;color:#475569;margin:10px 0;">Select a subject to see available quizzes</p>
+<div class="subject-filter-btns" id="studentSubjectFilterBtns"></div>
+<div class="controls">
+<button class="back-btn" id="closeSubjectModal">Close</button>
 </div>
 </div>
 </div>
@@ -474,8 +637,14 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 
-<!-- TEACHER DASHBOARD -->
+<!-- TEACHER DASHBOARD WITH SIDEBAR -->
 <div class="screen" id="teacherDashScreen">
+<div class="subject-sidebar" id="subjectSidebar">
+<h3>📂 Subjects</h3>
+<div class="subject-list" id="subjectList"></div>
+<button class="add-subject-btn" id="addSubjectBtn">➕ New Subject</button>
+</div>
+<div class="teacher-content">
 <div class="lms-panel">
 <h2>👩‍🏫 My Quizzes</h2>
 <p style="text-align:center;">Logged in as: <strong id="teacherEmailDisplay"></strong></p>
@@ -490,6 +659,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 </div>
 </div>
 </div>
+</div>
 
 <!-- TEACHER QUIZ EDITOR -->
 <div class="screen" id="teacherEditorScreen">
@@ -498,6 +668,10 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="quiz-meta-box">
 <label>Quiz Title</label>
 <input type="text" id="quizTitleInput" placeholder="e.g., ICT Basics Quiz">
+<label>Subject Category</label>
+<select id="quizSubjectInput" style="width:100%;padding:10px;border-radius:8px;border:1px solid #cbd5e1;font-family:'Poppins',sans-serif;">
+<option value="">-- Select Subject --</option>
+</select>
 <label>Description</label>
 <textarea id="quizDescInput" rows="2" placeholder="Short description shown to students"></textarea>
 <label>Visibility</label>
@@ -605,7 +779,7 @@ footer{text-align:center;padding:20px;font-size:clamp(.85rem,2.5vw,.95rem);color
 <div class="controls">
 <button class="delete-btn small-btn" id="deleteAllQuizzesBtn">🗑 Delete ALL Quizzes</button>
 </div>
-<div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Owner</th><th>Code</th><th>Visibility</th><th>Qs</th><th>Scores</th><th>Actions</th></tr></thead>
+<div class="table-wrapper"><table class="data-table"><thead><tr><th>Title</th><th>Owner</th><th>Subject</th><th>Code</th><th>Visibility</th><th>Qs</th><th>Scores</th><th>Actions</th></tr></thead>
 <tbody id="quizzesTableBody"></tbody></table></div>
 </div>
 
@@ -779,6 +953,7 @@ let students = {};
 let leaderboard = [];
 let resetTokens = {};
 let minigameScores = { dragdrop: [], cardgame: [] };
+let subjects = {}; // ====== NEW: Store subjects for each teacher
 let dbReady = false;
 
 const SESSION_KEY = 'ict_hub_session_v4';
@@ -830,7 +1005,8 @@ const sampleId = genId();
 const initialData = {
 teachers:{}, students:{}, leaderboard:[], resetTokens:{},
 minigameScores:{dragdrop:[],cardgame:[]},
-quizzes:{ [sampleId]:{ id:sampleId, code:genCode({}), title:"ICT Basics (Sample)", desc:"Demo quiz with default ICT questions.", ownerEmail:"system@gmail.com", ownerName:"System", visibility:"public", questions:JSON.parse(JSON.stringify(defaultQuestions)), createdAt:new Date().toISOString() }}
+subjects:{},
+quizzes:{ [sampleId]:{ id:sampleId, code:genCode({}), title:"ICT Basics (Sample)", desc:"Demo quiz with default ICT questions.", subject:"ICT", ownerEmail:"system@gmail.com", ownerName:"System", visibility:"public", questions:JSON.parse(JSON.stringify(defaultQuestions)), createdAt:new Date().toISOString() }}
 };
 await fb.setDoc(dref, initialData);
 applyCloudData(initialData);
@@ -855,6 +1031,7 @@ function applyCloudData(data) {
 teachers=data.teachers||{}; quizzes=data.quizzes||{}; students=data.students||{};
 leaderboard=data.leaderboard||[]; resetTokens=data.resetTokens||{};
 minigameScores=data.minigameScores||{dragdrop:[],cardgame:[]};
+subjects=data.subjects||{};
 if(!minigameScores.dragdrop) minigameScores.dragdrop=[];
 if(!minigameScores.cardgame) minigameScores.cardgame=[];
 }
@@ -865,7 +1042,7 @@ if(!dbReady){ toast("Not connected","error"); return; }
 setCloudStatus("syncing","Saving...");
 try {
 const fb=window.__firebase;
-await fb.setDoc(fb.doc(fb.db,'app_data','main'),{teachers,quizzes,students,leaderboard,resetTokens,minigameScores});
+await fb.setDoc(fb.doc(fb.db,'app_data','main'),{teachers,quizzes,students,leaderboard,resetTokens,minigameScores,subjects});
 setCloudStatus("online","Online");
 } catch(err){ console.error(err); setCloudStatus("offline","Save failed"); toast("⚠️ Save failed","error"); }
 }
@@ -875,7 +1052,7 @@ function saveAll(){ scheduleSave(); }
 function onCloudUpdate() {
 if(currentUser?.role==="admin" && $("adminDashScreen").classList.contains("active")){ renderAdminStats(); renderAdminTables(); }
 if(currentUser?.role==="student" && $("studentQuizBrowser").classList.contains("active")) renderPublicQuizzes();
-if(currentUser?.role==="teacher" && $("teacherDashScreen").classList.contains("active")) renderMyQuizzes();
+if(currentUser?.role==="teacher" && $("teacherDashScreen").classList.contains("active")){ renderMyQuizzes(); renderSubjectSidebar(); }
 if($("teacherMinigameLbScreen").classList.contains("active")) renderTeacherMg();
 if($("minigameLbScreen").classList.contains("active") && currentMgView) renderMinigameLeaderboardLive();
 }
@@ -891,6 +1068,7 @@ let lastSavedScoreKey = null;
 let currentMgView = null;
 let iframePollInterval = null;
 let lastIframeScoreSnapshot = null;
+let currentSelectedSubject = null; // ====== NEW: Track student's selected subject filter
 
 function saveSession(remember) {
 if(!currentUser) return;
@@ -954,6 +1132,7 @@ stopIframePolling();
 $("gameFrameContainer").classList.remove("active");
 $("gameIframe").src="about:blank";
 activeMinigame=null; lastSavedScoreKey=null;
+currentSelectedSubject=null;
 showScreen("roleScreen"); updateTopNav();
 toast("👋 Logged out","info");
 }
@@ -1007,6 +1186,7 @@ if(isRegistering) {
 if(teachers[email]){ $("teacherError").textContent="Email already registered."; return; }
 if(displayName.length<2){ $("teacherError").textContent="Enter a display name (min 2)."; return; }
 teachers[email]={password:pass,displayName,createdAt:new Date().toISOString()};
+subjects[email]=["ICT","Math","Science","English"]; // ====== NEW: Default subjects
 saveAll();
 currentUser={role:"teacher",email,displayName}; saveSession(remember);
 toast(`Welcome, ${displayName}! 🎉`,"success"); openTeacherDashboard();
@@ -1083,24 +1263,42 @@ $("studentHubWelcome").textContent=`Welcome, ${currentUser.name}! Pick a game, h
 }
 
 $("playIctQuizBtn").onclick=()=>{
+currentSelectedSubject=null;
 showScreen("studentQuizBrowser"); renderPublicQuizzes();
 $("accessCodeError").textContent=""; $("accessCodeInput").value="";
 };
+
+// ====== NEW: SUBJECT FILTER MODAL FOR STUDENTS ======
+$("filterBySubjectBtn").onclick=()=>{
+const allSubjects = new Set();
+Object.values(quizzes).forEach(q=>{
+  if(q.subject && q.visibility==="public") allSubjects.add(q.subject);
+});
+const btns = $("studentSubjectFilterBtns");
+btns.innerHTML = Array.from(allSubjects).sort().map(s=>{
+  const count = Object.values(quizzes).filter(q=>q.subject===s && q.visibility==="public").length;
+  return `<button class="subject-filter-btn" onclick="selectStudentSubject('${escapeHtml(s)}')" style="position:relative;">${escapeHtml(s)} <span style="font-size:.75rem;opacity:.7;">(${count})</span></button>`;
+}).join("");
+$("studentSubjectModal").classList.add("active");
+};
+window.selectStudentSubject = (sub)=>{
+  currentSelectedSubject = sub;
+  $("studentSubjectModal").classList.remove("active");
+  renderPublicQuizzes();
+  toast(`📚 Filtering by ${sub}`, "info");
+};
+$("closeSubjectModal").onclick=()=>$("studentSubjectModal").classList.remove("active");
 
 // ============================================================
 // ============ MINIGAME SCORE TRACKING (BULLETPROOF) ==========
 // ============================================================
 
 function injectScoreCatcherIntoIframe(iframe) {
-  // Try to inject a small script INTO the iframe that proxies score events to parent.
-  // This works only if same-origin (which it is since it's hosted on github.io but loaded into our page).
-  // If cross-origin blocks us, the iframe must use postMessage itself - but we also poll as backup.
   try {
     const iframeWin = iframe.contentWindow;
     const iframeDoc = iframe.contentDocument || iframeWin.document;
     if(!iframeDoc) return;
 
-    // Inject a watcher script that listens for common ways games signal "game over"
     const script = iframeDoc.createElement('script');
     script.textContent = `
       (function(){
@@ -1113,14 +1311,11 @@ function injectScoreCatcherIntoIframe(iframe) {
           } catch(e){}
         }
         
-        // Expose a global function games can call
         window.reportScore = sendScore;
         window.submitScore = sendScore;
         window.saveScore = sendScore;
         
-        // Watch DOM for game-over indicators
         function scanForScore(){
-          // Look for text like "Score: X" or "X / Y" or "X out of Y"
           const bodyText = document.body ? document.body.innerText : '';
           const patterns = [
             /(?:final\\s*)?score[:\\s]+(\\d+)\\s*(?:\\/|out of|of)\\s*(\\d+)/i,
@@ -1140,7 +1335,6 @@ function injectScoreCatcherIntoIframe(iframe) {
           return null;
         }
         
-        // Watch for visible "game over" / "complete" / "finished" elements
         function checkGameOver(){
           const result = scanForScore();
           if(result && (result.score !== window.__lastReportedScore || result.max !== window.__lastReportedMax)){
@@ -1156,11 +1350,9 @@ function injectScoreCatcherIntoIframe(iframe) {
         
         setInterval(checkGameOver, 800);
         
-        // Also intercept localStorage saves (common for games)
         const origSetItem = localStorage.setItem.bind(localStorage);
         localStorage.setItem = function(k, v){
           origSetItem(k, v);
-          // If it looks like a score being saved, notify parent
           if(/score|highscore|result/i.test(k)){
             try {
               window.parent.postMessage({type:"GAME_STORAGE", key:k, value:v}, "*");
@@ -1191,7 +1383,6 @@ function startIframePolling() {
       if(!doc || !doc.body) return;
       const text = doc.body.innerText || "";
       
-      // Scan for score patterns
       const patterns = [
         /(?:final\s*)?score[:\s]+(\d+)\s*(?:\/|out of|of)\s*(\d+)/i,
         /(\d+)\s*\/\s*(\d+)\s*(?:correct|points|matches)?/i,
@@ -1218,7 +1409,6 @@ function startIframePolling() {
         }
       }
     } catch(e){
-      // cross-origin, skip silently
     }
   }, 1000);
 }
@@ -1227,7 +1417,6 @@ function stopIframePolling() {
   if(iframePollInterval){ clearInterval(iframePollInterval); iframePollInterval = null; }
 }
 
-// ============ MINIGAME LAUNCH ============
 function launchMinigame(gameKey, title, url) {
 if(!currentUser || currentUser.role !== "student") {
 toast("Please log in as a student first to record scores.","error"); return;
@@ -1243,15 +1432,12 @@ toast("🎮 Have fun! Your score will save when the game ends.","info");
 
 iframe.onload = ()=>{
   console.log("📺 Iframe loaded:", url);
-  // Try to inject score catcher
   setTimeout(()=>{
     injectScoreCatcherIntoIframe(iframe);
   }, 500);
-  // Tell game we're ready
   try {
     iframe.contentWindow.postMessage({ type:"PARENT_READY", studentName: currentUser.name }, "*");
   } catch(e){}
-  // Start polling backup
   startIframePolling();
 };
 }
@@ -1270,7 +1456,6 @@ activeMinigame=null;
 lastSavedScoreKey=null;
 };
 
-// ============ MANUAL SAVE BUTTON ============
 $("manualSaveBtn").onclick=()=>{
   if(!activeMinigame){ toast("No active game","error"); return; }
   $("manualScoreInput").value="";
@@ -1288,12 +1473,10 @@ $("confirmManualSave").onclick=()=>{
   if(isNaN(max) || max < 1){ toast("Enter a valid max","error"); return; }
   if(score > max){ toast("Score can't be higher than max","error"); return; }
   $("manualScoreModal").classList.remove("active");
-  // Force allow save by resetting dedup
   lastSavedScoreKey = null;
   recordMinigameScore(score, max);
 };
 
-// ============ CORE: RECORD MINIGAME SCORE ============
 function recordMinigameScore(score, max) {
 if(!activeMinigame){ toast("⚠️ No active game session","error"); return; }
 if(!currentUser || currentUser.role !== "student"){ toast("⚠️ Not logged in as student","error"); return; }
@@ -1331,7 +1514,6 @@ else if(grade.pct >= 90) setTimeout(()=>toast("🏆 Excellent work!", "success")
 else if(grade.pct >= 70) setTimeout(()=>toast("👍 Nice job!", "success"), 400);
 }
 
-// ============ MESSAGE LISTENER (catches ALL formats) ============
 window.addEventListener("message", (event)=>{
 const data = event.data;
 if(!data) return;
@@ -1341,7 +1523,6 @@ if(typeof data === "string"){
     const p = JSON.parse(data); 
     if(p && typeof p === "object") return handleMessageData(p); 
   } catch(e){
-    // Maybe it's "score:5" or "5/10" format
     const m1 = data.match(/(\d+)\s*\/\s*(\d+)/);
     if(m1){
       handleMessageData({score:parseInt(m1[1]), max:parseInt(m1[2])});
@@ -1357,9 +1538,7 @@ handleMessageData(data);
 function handleMessageData(data){
 console.log("📨 Message received:", data);
 
-// Storage event from injected script
 if(data.type === "GAME_STORAGE" && activeMinigame){
-  // Check if value contains a score
   try {
     const v = data.value;
     if(typeof v === "string"){
@@ -1372,7 +1551,6 @@ if(data.type === "GAME_STORAGE" && activeMinigame){
   } catch(e){}
 }
 
-// Try EVERY possible field name
 const scoreFields = ['score','points','value','correct','final','finalScore','playerScore','result','total_score','totalScore'];
 const maxFields = ['max','total','maxScore','outOf','max_score','maximum','target','goal','outof'];
 
@@ -1390,7 +1568,6 @@ for(const f of maxFields){
   }
 }
 
-// If we have score but no max, default to 10 (common game length)
 if(!isNaN(score) && (isNaN(max) || !max)){
   max = 10;
 }
@@ -1403,7 +1580,6 @@ console.log("✅ Score message captured:", { score, max, raw: data });
 recordMinigameScore(score, max);
 }
 
-// ============ MINIGAME LEADERBOARD ============
 function showMinigameLeaderboard(gameKey) {
 currentMgView = gameKey;
 const title = gameKey === "dragdrop" ? "🧩 Drag & Drop" : "🂡 Card Game";
@@ -1440,14 +1616,16 @@ enterQuiz(quiz.id);
 
 function renderPublicQuizzes() {
 const list=$("publicQuizzesList"), f=($("studentQuizSearch").value||"").toLowerCase();
-const pub=Object.values(quizzes).filter(q=>q.visibility==="public"&&(q.questions?.length||0)>0&&(q.title.toLowerCase().includes(f)||(q.ownerName||"").toLowerCase().includes(f))).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
-if(pub.length===0){ list.innerHTML=`<div class="empty-state"><div class="icon">📂</div><h3>No public quizzes yet</h3><p>Check back later or use a code.</p></div>`; return; }
+let pub=Object.values(quizzes).filter(q=>q.visibility==="public"&&(q.questions?.length||0)>0&&(q.title.toLowerCase().includes(f)||(q.ownerName||"").toLowerCase().includes(f)));
+if(currentSelectedSubject) pub = pub.filter(q=>q.subject===currentSelectedSubject);
+pub.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+if(pub.length===0){ list.innerHTML=`<div class="empty-state"><div class="icon">📂</div><h3>No quizzes found</h3><p>${currentSelectedSubject?`No quizzes in "${currentSelectedSubject}". `:""}Check back later or use a code.</p></div>`; return; }
 const now=Date.now();
 list.innerHTML=pub.map(q=>{
 const isNew=q.createdAt&&(now-new Date(q.createdAt).getTime()<1000*60*60*24*3);
 const used=students[currentUser?.key]?.attempts?.[q.id]||0;
 const al=used>=2?`<span class="badge" style="background:#fecaca;color:#991b1b;">Attempts used (2/2)</span>`:`<span class="badge" style="background:#e0e7ff;color:#3730a3;">Attempts: ${used}/2</span>`;
-return `<div class="quiz-card-lms"><h3>${escapeHtml(q.title)} <span class="badge badge-public">🌐 Public</span>${isNew?` <span class="badge badge-new">✨ NEW</span>`:""}</h3><p>${escapeHtml(q.desc||'No description')}</p><p><strong>👨‍🏫 By:</strong> ${escapeHtml(q.ownerName||"Teacher")} | <strong>❓</strong> ${q.questions.length} ${al}</p><div class="card-actions"><button class="success-btn" onclick="enterQuiz('${q.id}')" ${used>=2?'disabled':''} style="max-width:100%;flex:1 1 100%;">${used>=2?'🚫 Limit Reached':'▶️ Start Quiz'}</button></div></div>`;
+return `<div class="quiz-card-lms"><h3>${escapeHtml(q.title)} <span class="badge badge-public">🌐 Public</span>${isNew?` <span class="badge badge-new">✨ NEW</span>`:""}</h3><p><strong>📂 Subject:</strong> ${escapeHtml(q.subject||"ICT")}</p><p>${escapeHtml(q.desc||'No description')}</p><p><strong>👨‍🏫 By:</strong> ${escapeHtml(q.ownerName||"Teacher")} | <strong>❓</strong> ${q.questions.length} ${al}</p><div class="card-actions"><button class="success-btn" onclick="enterQuiz('${q.id}')" ${used>=2?'disabled':''} style="max-width:100%;flex:1 1 100%;">${used>=2?'🚫 Limit Reached':'▶️ Start Quiz'}</button></div></div>`;
 }).join("");
 }
 
@@ -1587,18 +1765,66 @@ body.innerHTML=sorted.map((e,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(e.name)}</
 function openTeacherDashboard() {
 showScreen("teacherDashScreen"); updateTopNav();
 $("teacherEmailDisplay").textContent=`${currentUser.displayName} (${currentUser.email})`;
+renderSubjectSidebar();
 renderMyQuizzes();
 }
+
+// ====== NEW: RENDER SUBJECT SIDEBAR ======
+function renderSubjectSidebar() {
+const sidebarList = $("subjectList");
+const teacherSubjects = subjects[currentUser.email] || ["ICT"];
+sidebarList.innerHTML = teacherSubjects.map(s=>`
+  <button class="subject-btn" onclick="filterBySubjectTeacher('${escapeHtml(s)}')">
+    <span>📂 ${escapeHtml(s)}</span>
+    <span class="subject-count">${Object.values(quizzes).filter(q=>q.ownerEmail===currentUser.email && q.subject===s).length}</span>
+  </button>
+`).join("");
+}
+window.filterBySubjectTeacher = (sub)=>{
+  // This just updates the display to highlight a subject, actual filtering is in renderMyQuizzes
+  toast(`Viewing: ${sub}`, "info");
+};
+
+// ====== NEW: ADD SUBJECT ======
+$("addSubjectBtn").onclick=()=>{
+  const newSubject = prompt("Enter new subject name (e.g., Physics, History):");
+  if(!newSubject || newSubject.trim().length < 2) return;
+  const subject = newSubject.trim();
+  if(!subjects[currentUser.email]) subjects[currentUser.email] = [];
+  if(!subjects[currentUser.email].includes(subject)){
+    subjects[currentUser.email].push(subject);
+    saveAll();
+    renderSubjectSidebar();
+    toast(`✅ Subject "${subject}" added!`, "success");
+  } else {
+    toast("Subject already exists", "error");
+  }
+};
 
 function renderMyQuizzes() {
 const list=$("myQuizzesList");
 const mine=Object.values(quizzes).filter(q=>q.ownerEmail===currentUser.email);
 if(mine.length===0){ list.innerHTML=`<div class="empty-state"><div class="icon">📚</div><h3>No quizzes yet</h3><p>Click "Create New Quiz" to get started!</p></div>`; return; }
-list.innerHTML=mine.map(q=>{
-const link=`${location.origin}${location.pathname}?quiz=${q.code}`;
-const ac=leaderboard.filter(l=>l.quizId===q.id).length;
-return `<div class="quiz-card-lms"><h3>${escapeHtml(q.title)} <span class="badge ${q.visibility==='public'?'badge-public':'badge-code'}">${q.visibility==='public'?'🌐 Public':'🔒 Code-only'}</span></h3><p>${escapeHtml(q.desc||'No description')}</p><p><strong>Questions:</strong> ${q.questions.length} | <strong>Attempts:</strong> ${ac}</p><div class="link-box"><strong>Code:</strong> ${q.code} | <strong>Link:</strong> ${link}</div><div class="card-actions"><button onclick="editQuiz('${q.id}')">✏️ Edit</button><button class="success-btn" onclick="copyToClipboard('${link}','Link copied!')">📋 Copy Link</button><button onclick="copyToClipboard('${q.code}','Code copied!')">📋 Copy Code</button><button onclick="viewQuizLeaderboard('${q.id}')">🏆 Leaderboard</button><button class="delete-btn" onclick="deleteQuiz('${q.id}')">🗑 Delete</button></div></div>`;
-}).join("");
+
+// Group by subject
+const bySubject = {};
+mine.forEach(q=>{
+  const subj = q.subject || "Uncategorized";
+  if(!bySubject[subj]) bySubject[subj] = [];
+  bySubject[subj].push(q);
+});
+
+let html = "";
+Object.keys(bySubject).sort().forEach(subj=>{
+  html += `<div style="margin-top:20px;"><h3 style="color:#1d4ed8;border-bottom:2px solid #dbeafe;padding:10px 0;">📂 ${escapeHtml(subj)}</h3>`;
+  bySubject[subj].forEach(q=>{
+    const link=`${location.origin}${location.pathname}?quiz=${q.code}`;
+    const ac=leaderboard.filter(l=>l.quizId===q.id).length;
+    html += `<div class="quiz-card-lms"><h3>${escapeHtml(q.title)} <span class="badge ${q.visibility==='public'?'badge-public':'badge-code'}">${q.visibility==='public'?'🌐 Public':'🔒 Code-only'}</span></h3><p>${escapeHtml(q.desc||'No description')}</p><p><strong>Questions:</strong> ${q.questions.length} | <strong>Attempts:</strong> ${ac}</p><div class="link-box"><strong>Code:</strong> ${q.code} | <strong>Link:</strong> ${link}</div><div class="card-actions"><button onclick="editQuiz('${q.id}')">✏️ Edit</button><button class="success-btn" onclick="copyToClipboard('${link}','Link copied!')">📋 Copy Link</button><button onclick="copyToClipboard('${q.code}','Code copied!')">📋 Copy Code</button><button onclick="viewQuizLeaderboard('${q.id}')">🏆 Leaderboard</button><button class="delete-btn" onclick="deleteQuiz('${q.id}')">🗑 Delete</button></div></div>`;
+  });
+  html += `</div>`;
+});
+list.innerHTML = html;
 }
 
 window.editQuiz=id=>{ editingQuizId=id; openEditor(); };
@@ -1618,7 +1844,7 @@ $("teacherLbBack").onclick=()=>openTeacherDashboard();
 
 $("createNewQuizBtn").onclick=()=>{
 const id=genId();
-quizzes[id]={id,code:genCode(),title:"New Quiz",desc:"",ownerEmail:currentUser.email,ownerName:currentUser.displayName,visibility:"public",questions:[{q:"Sample question?",o:["A","B","C","D"],a:0,l:"easy",e:"Explanation."}],createdAt:new Date().toISOString()};
+quizzes[id]={id,code:genCode(),title:"New Quiz",desc:"",subject:"ICT",ownerEmail:currentUser.email,ownerName:currentUser.displayName,visibility:"public",questions:[{q:"Sample question?",o:["A","B","C","D"],a:0,l:"easy",e:"Explanation."}],createdAt:new Date().toISOString()};
 saveAll(); editingQuizId=id; toast("✨ Created!","success"); openEditor();
 };
 
@@ -1672,9 +1898,20 @@ const qz=quizzes[editingQuizId];
 if(!qz){ toast("Quiz gone","error"); openTeacherDashboard(); return; }
 $("editorTitle").textContent=(editorFromAdmin?"🛡️ Admin Edit: ":"📝 Edit: ")+qz.title;
 $("quizTitleInput").value=qz.title; $("quizDescInput").value=qz.desc||"";
+$("quizSubjectInput").value=qz.subject||"ICT";
 $("quizVisibility").value=qz.visibility; $("quizCode").value=qz.code;
 $("quizLink").value=`${location.origin}${location.pathname}?quiz=${qz.code}`;
+populateSubjectOptions();
 renderQuestionsEditor();
+}
+
+function populateSubjectOptions() {
+const sel = $("quizSubjectInput");
+const teacherSubjects = subjects[currentUser.email] || ["ICT"];
+sel.innerHTML = `<option value="">-- Select Subject --</option>` +
+  teacherSubjects.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+const qz=quizzes[editingQuizId];
+if(qz) sel.value = qz.subject || "";
 }
 
 $("copyLinkBtn").onclick=()=>copyToClipboard($("quizLink").value,"Link copied!");
@@ -1761,7 +1998,10 @@ $("confirmBulkAddBtn").onclick = () => {
 
 $("saveAllBtn").onclick=()=>{
 const qz=quizzes[editingQuizId];
-qz.title=$("quizTitleInput").value.trim()||"Untitled"; qz.desc=$("quizDescInput").value.trim(); qz.visibility=$("quizVisibility").value;
+qz.title=$("quizTitleInput").value.trim()||"Untitled";
+qz.desc=$("quizDescInput").value.trim();
+qz.subject=$("quizSubjectInput").value||"ICT";
+qz.visibility=$("quizVisibility").value;
 document.querySelectorAll("#questionsEditor .q-editor").forEach(ed=>{
 ed.querySelectorAll("[data-field]").forEach(f=>{
 const idx=+f.dataset.idx, field=f.dataset.field;
@@ -1840,10 +2080,10 @@ function renderAdminQuizzes() {
 const f=($("quizSearchAdmin").value||"").toLowerCase();
 const entries=Object.values(quizzes).filter(q=>q.title.toLowerCase().includes(f));
 const tb=$("quizzesTableBody");
-if(!entries.length){ tb.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="icon">📚</div><h3>No quizzes</h3></div></td></tr>`; return; }
+if(!entries.length){ tb.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">📚</div><h3>No quizzes</h3></div></td></tr>`; return; }
 tb.innerHTML=entries.map(q=>{
 const sc=leaderboard.filter(l=>l.quizId===q.id).length;
-return `<tr><td>${escapeHtml(q.title)}</td><td>${escapeHtml(q.ownerName||"")}<br><span style="font-size:.75rem;color:#64748b;">${escapeHtml(q.ownerEmail||"")}</span></td><td><code>${q.code}</code></td><td>${q.visibility==='public'?'🌐':'🔒'}</td><td>${q.questions?.length||0}</td><td>${sc}</td><td class="action-cell"><button class="admin-btn" onclick="adminEditQuiz('${q.id}')">✏️</button><button class="warn-btn" onclick="adminResetQuizLb('${q.id}')">🧹</button><button class="delete-btn" onclick="adminDeleteQuiz('${q.id}')">🗑</button></td></tr>`;
+return `<tr><td>${escapeHtml(q.title)}</td><td>${escapeHtml(q.ownerName||"")}<br><span style="font-size:.75rem;color:#64748b;">${escapeHtml(q.ownerEmail||"")}</span></td><td>${escapeHtml(q.subject||"ICT")}</td><td><code>${q.code}</code></td><td>${q.visibility==='public'?'🌐':'🔒'}</td><td>${q.questions?.length||0}</td><td>${sc}</td><td class="action-cell"><button class="admin-btn" onclick="adminEditQuiz('${q.id}')">✏️</button><button class="warn-btn" onclick="adminResetQuizLb('${q.id}')">🧹</button><button class="delete-btn" onclick="adminDeleteQuiz('${q.id}')">🗑</button></td></tr>`;
 }).join("");
 }
 
@@ -1918,7 +2158,7 @@ window.adminDeleteTeacher=email=>{
 if(!confirm(`Delete "${email}" and ALL their quizzes?`)) return;
 const ids=Object.values(quizzes).filter(q=>q.ownerEmail===email).map(q=>q.id);
 ids.forEach(id=>delete quizzes[id]); leaderboard=leaderboard.filter(l=>!ids.includes(l.quizId));
-delete teachers[email]; delete resetTokens[email]; saveAll();
+delete teachers[email]; delete resetTokens[email]; delete subjects[email]; saveAll();
 toast("🗑 Deleted","admin"); renderAdminStats(); renderAdminTables();
 };
 window.adminDeleteStudent=key=>{
@@ -1959,6 +2199,7 @@ if(teachers[em]){ toast("Already exists","error"); return; }
 const name=prompt("Display name:"); if(!name||name.trim().length<2){ toast("Invalid name","error"); return; }
 const pass=prompt("Initial password (min 6):"); if(!pass||pass.length<6){ toast("Too short","error"); return; }
 teachers[em]={password:pass,displayName:name.trim(),createdAt:new Date().toISOString()};
+subjects[em] = ["ICT","Math","Science","English"];
 saveAll(); toast("✅ Teacher created","admin"); renderAdminStats(); renderAdminTeachers();
 };
 
@@ -1968,7 +2209,7 @@ if(prompt("Type DELETE:")!=="DELETE") return;
 const emails=Object.keys(teachers);
 const ids=Object.values(quizzes).filter(q=>emails.includes(q.ownerEmail)).map(q=>q.id);
 ids.forEach(id=>delete quizzes[id]); leaderboard=leaderboard.filter(l=>!ids.includes(l.quizId));
-teachers={}; resetTokens={}; saveAll();
+teachers={}; resetTokens={}; subjects={}; saveAll();
 toast("🗑 All teachers deleted","admin"); renderAdminStats(); renderAdminTables();
 };
 $("deleteAllStudentsBtn").onclick=()=>{
